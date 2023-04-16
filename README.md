@@ -14,4 +14,4 @@
 ### Schema Diagram (Pt.1)
 <br>
 
-![picture alt](./Project_2.jpg "Title is optional")
+![Schema diagram for out library management system](./Project_2.jpg "Title is optional")
