@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Book_Loans(
     Card_no INTEGER,
     Date_out text,
     Due_date text,
-    Returned_date,
+    Returned_date DATE,
     FOREIGN KEY (Book_id) REFERENCES Book(Book_id),
     FOREIGN KEY (Branch_id) REFERENCES Library_branch(Branch_id),
     FOREIGN KEY (Card_no) REFERENCES Borrower(Card_no)
