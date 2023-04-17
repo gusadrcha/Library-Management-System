@@ -1,3 +1,12 @@
+-- Task 2 Query --
+SELECT COUNT(*) FROM Publisher UNION ALL
+SELECT COUNT(*) FROM Library_branch UNION ALL
+SELECT COUNT(*) FROM Borrower UNION ALL
+SELECT COUNT(*) FROM Book UNION ALL
+SELECT COUNT(*) FROM Book_Loans UNION ALL
+SELECT COUNT(*) FROM Book_copies UNION ALL
+SELECT COUNT(*) FROM Book_authors;
+
 -- Question 1 --
 INSERT INTO Borrower (name, address, phone_number)
 VALUES ('Gustavo Chavez', '200 N Stadium Dr, Seymour, TX 76380', '9032040703');
@@ -52,8 +61,8 @@ FROM Book_loans;
 -- Question 9 --
 SELECT Title, Author_name, julianday(Returned_date) - julianday(Date_out) as Borrowed, Returned_date > Due_date as Late
 FROM Book_authors, Borrower, Book_loans, Book
-WHERE Borrower.name = 'Ethan Martinez' AND Borrower.Card_no = Book_loans.Card_no
-GROUP BY date_out;
+WHERE Borrower.name = 'Ethan Martinez' AND Borrower.Card_no = Book_Loans.Card_no 
+AND Book.book_id = Book_Loans.book_id AND Book_authors.book_id = Book.book_id GROUP BY date_out;
 
 -- Question 10 --
 SELECT name, address
