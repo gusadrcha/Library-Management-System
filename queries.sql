@@ -28,11 +28,10 @@ VALUES ("Harry Potter and the Sorcerer's Stone", 'J.K. Rowling');
 
 -- Question 7 --
 SELECT Branch_id,
-        (SELECT COUNT(*) FROM Book_Loans WHERE Returned_date IS NOT NULL) as Returned,
-        (SELECT COUNT(*) FROM Book_Loans WHERE Returned_date IS NULL) as Borrowed,
-        (SELECT COUNT(*) FROM Book_Loans WHERE Returned_date > Due_date GROUP BY Branch_id) as Late
-FROM Book_Loans
-GROUP BY Branch_id;
+      (SELECT COUNT(*) FROM (LIBRARY_BRANCH NATURAL JOIN BOOK_LOANS) joiner WHERE joiner.Branch_id=LBBL.Branch_id GROUP BY joiner.Branch_Id) as Returned,
+      (SELECT COUNT(*)  FROM BOOK_LOANS as BL WHERE BL.Branch_id=LBBL.Branch_id and ((JULIANDAY(BL.Returned_date)>JULIANDAY(BL.Due_Date))) GROUP BY BL.Branch_id) as Late
+FROM (LIBRARY_BRANCH NATURAL JOIN BOOK_LOANS) LBBL
+GROUP BY LBBL.Branch_id;
 
 -- Question 8 --
 SELECT MAX(julianday(Returned_date) - julianday(Date_out)) as Max
