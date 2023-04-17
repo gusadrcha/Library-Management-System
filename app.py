@@ -1,6 +1,11 @@
 import tkinter as tk
+import sqlite3
 
+# creates a window
 LMS_GUI_WINDOW = tk.Tk()
+
+# connects the GUI with the LMS database
+connection = sqlite3.connect("LMS.db")
 
 # default size of window when first created
 height = LMS_GUI_WINDOW.winfo_screenheight()/2
@@ -16,3 +21,6 @@ LMS_GUI_WINDOW.eval('tk::PlaceWindow . center')
 
 # creates the mainloop of the GUI
 LMS_GUI_WINDOW.mainloop()
+
+# closes the connection to the database
+connection.close()
