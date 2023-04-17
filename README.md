@@ -23,4 +23,4 @@
 
 <br>Below is the schema for the database</br>
 
-![Schema for the library management system](./img/Schema-Diagram-Project-2-Part%201.jpg "Schema for the database")
+![Schema for the library management system](./img/Schema-Diagram-Project-2-Part-1.jpg "Schema for the database")
