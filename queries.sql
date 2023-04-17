@@ -22,9 +22,21 @@ WHERE branch_id = (SELECT branch_id
                    FROM library_branch
                    WHERE branch_name = 'East Branch');
 
--- Question 4 --
+-- Question 4a --
 INSERT INTO Book (title, book_author)
 VALUES ("Harry Potter and the Sorcerer's Stone", 'J.K. Rowling');
+
+-- Question 4b --
+INSERT INTO Library_branch
+VALUES (null, 'North Branch', '456 NW, Irving, TX 76100'), (null, 'UTA Branch', '123 Cooper St, Arlington TX 76101');
+
+-- Question 5 --
+SELECT Title, Branch_name, julianday(Returned_date) - julianday(Date_out) as Borrowed
+FROM Library_branch, Book, Book_loans WHERE Book_loans.Book_id = Book.Book_id AND 
+Book_loans.Branch_id = Library_branch.Branch_id AND Date_out BETWEEN '2022-03-05' AND '2022-03-23';
+
+-- Question 6 --
+SELECT B.name FROM Borrower B, Book_Loans BL WHERE BL.Card_no = B.Card_no AND BL.Returned_date IS NULL;
 
 -- Question 7 --
 SELECT Branch_id,
