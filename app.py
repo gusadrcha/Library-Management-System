@@ -13,6 +13,9 @@ width = LMS_GUI_WINDOW.winfo_screenwidth()/2
 
 LMS_GUI_WINDOW.geometry(f'{int(width)}x{int(height)}')
 
+# change the icon of the application
+LMS_GUI_WINDOW.iconbitmap("./book-icon-file-13.jpg")
+
 # set the title of the GUI
 LMS_GUI_WINDOW.title("Library Management System")
 
