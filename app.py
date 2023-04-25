@@ -30,8 +30,24 @@ LMS_GUI_WINDOW.iconbitmap("book-icon-file-13.jpg")
 # set the title of the GUI
 LMS_GUI_WINDOW.title("Library Management System")
 
+main_frame = tk.Frame(LMS_GUI_WINDOW)
+main_frame.pack(fill=tk.BOTH, expand=1)
+
+my_canvas = tk.Canvas(main_frame)
+my_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+my_scrollbar = tk.Scrollbar(main_frame, orient=tk.VERTICAL, command=my_canvas.yview)
+my_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+# configure the canvas
+my_canvas.configure(yscrollcommand=my_scrollbar.set)
+my_canvas.bind(
+    '<Configure>', lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all"))
+)
+
 # input frame that holds all input entries
-inputFrame = tk.Frame(LMS_GUI_WINDOW, background=_navyblue)
+inputFrame = tk.Frame(my_canvas, background=_navyblue)
+outputFrame = tk.Frame(my_canvas, background=_blue)
 
 # publisher input frame that holds all publisher entries -------------
 publisherInputFrame = tk.Frame(inputFrame, background="white", padx=20, pady=20)
@@ -147,8 +163,33 @@ bookLoans_DateOutEntry.grid(row=4, column=2, columnspan=2)
 
 bookLoans_DateReturnedEntry = tk.Entry(bookLoansInputFrame)
 
+
+publisherInputFrame = tk.Frame(outputFrame, background="white", padx=20, pady=20)
+publisherInputFrame.grid(row=0, column=0, padx=20, pady=20)
+
+publisherFrameLabel = tk.Label(publisherInputFrame, text="PUBLISHER", font=('courier sans mono', 16, 'bold'))
+publisherFrameLabel.grid(row=0, column=0, columnspan=4, sticky="nw")
+
+publisherNameEntry = tk.Entry(publisherInputFrame)
+publisherNameEntryLabel = tk.Label(publisherInputFrame, text="Publisher Name")
+publisherNameEntryLabel.grid(row=1, column=0, sticky='sw')
+publisherNameEntry.grid(row=2, column=0, columnspan=2)
+
+publisherPhoneNumberEntry = tk.Entry(publisherInputFrame)
+publisherPhoneNumberEntryLabel = tk.Label(publisherInputFrame, text="Publisher Phone Number")
+publisherPhoneNumberEntryLabel.grid(row=1, column=2, sticky="sw")
+publisherPhoneNumberEntry.grid(row=2, column=2, columnspan=2)
+
+publisherAddressEntry = tk.Entry(publisherInputFrame)
+publisherAddressEntryLabel = tk.Label(publisherInputFrame, text="Publisher Address")
+publisherAddressEntryLabel.grid(row=3, column=0, sticky="sw")
+publisherAddressEntry.grid(row=4, column=0)
+
 # place the whole entirety of the input frame onto the root window
 inputFrame.grid(row=0, column=0, sticky="nesw", columnspan=2)
+
+my_canvas.create_window((0, 0), window=inputFrame, anchor="ne")
+my_canvas.create_window((0, 0), window=outputFrame, anchor="nw")
 
 # creates the mainloop of the GUI
 LMS_GUI_WINDOW.mainloop()
