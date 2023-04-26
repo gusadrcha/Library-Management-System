@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkcalendar import Calendar, DateEntry
 import sqlite3
 
 _white = "#ffffff"
@@ -46,84 +47,128 @@ tabControl.add(tab5, text="Query 5")
 
 tabControl.pack(expand=1, fill='both')
 
+# -- Query 1 --
 # book input frame that holds all book entries-----------------
-bookInputFrame = tk.Frame(tab1, background="white")
-bookInputFrame.grid(row=3, column=0, padx=20, pady=20)
+bookInputFrame1 = tk.Frame(tab1, background="white")
+bookInputFrame1.grid(row=0, column=0, padx=20, pady=20)
 
-bookNameEntry = tk.Entry(bookInputFrame)
-bookNameEntryLabel = tk.Label(bookInputFrame, text="Book Title")
-bookNameEntryLabel.grid(row=0, column=0, sticky='sw')
-bookNameEntry.grid(row=1, column=0, columnspan=2)
+# T = Text(root, bg, fg, bd, height, width, font, ..)
+Q1DescriptionLabel = tk.Label(bookInputFrame1,
+                              text="Check Out a Book").grid(row=0, column=0, columnspan=4, pady=10)
 
-bookIDEntry = tk.Entry(bookInputFrame)
-bookIDEntryLabel = tk.Label(bookInputFrame, text="Book ID")
-bookIDEntryLabel.grid(row=0, column=2, sticky="sw")
-bookIDEntry.grid(row=1, column=2, columnspan=2)
+bookNameEntry = tk.Entry(bookInputFrame1)
+bookNameEntryLabel = tk.Label(bookInputFrame1, text="Book Title")
+bookNameEntryLabel.grid(row=1, column=0, sticky='sw')
+bookNameEntry.grid(row=2, column=0, columnspan=2)
 
-bookPublisherEntry = tk.Entry(bookInputFrame)
-bookPublisherEntryLabel = tk.Label(bookInputFrame, text="Book Publisher")
-bookPublisherEntryLabel.grid(row=2, column=0, sticky="sw")
-bookPublisherEntry.grid(row=3, column=0, columnspan=2)
+bookIDEntry = tk.Entry(bookInputFrame1)
+bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID")
+bookIDEntryLabel.grid(row=1, column=2, sticky="sw")
+bookIDEntry.grid(row=2, column=2, columnspan=2)
 
-bookBorrowerEntry = tk.Entry(bookInputFrame)
-bookBorrowerEntryLabel = tk.Label(bookInputFrame, text="Card No.")
-bookBorrowerEntryLabel.grid(row=2, column=2, sticky="sw")
-bookBorrowerEntry.grid(row=3, column=2)
+bookPublisherEntry = tk.Entry(bookInputFrame1)
+bookPublisherEntryLabel = tk.Label(bookInputFrame1, text="Book Publisher")
+bookPublisherEntryLabel.grid(row=3, column=0, sticky="sw")
+bookPublisherEntry.grid(row=4, column=0, columnspan=2)
+
+bookBorrowerEntry = tk.Entry(bookInputFrame1)
+bookBorrowerEntryLabel = tk.Label(bookInputFrame1, text="Card No.")
+bookBorrowerEntryLabel.grid(row=3, column=2, sticky="sw")
+bookBorrowerEntry.grid(row=4, column=2, columnspan=2)
+
+Q1SubmitButton = tk.Button(bookInputFrame1, text = 'Submit',
+                           command = 1+1).grid(row=5, column=0,columnspan=4, pady=10)
 # ----------------------------------
 
 # -- Query 2 --
 # borrower input frame that holds all borrower entries --------------
-borrowerInputFrame = tk.Frame(tab2, background="white", padx=20, pady=20)
-borrowerInputFrame.grid(row=2, column=0, padx=20, pady=20)
+borrowerInputFrame = tk.Frame(tab2, background="white")
+borrowerInputFrame.grid(row=0, column=0, padx=20, pady=20)
+
+Q2DescriptionLabel = tk.Label(borrowerInputFrame,
+                              text="Create Library Account").grid(row=0, column=0, columnspan=2, pady=10)
 
 borrwerNameEntry = tk.Entry(borrowerInputFrame)
 borrwerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name")
-borrwerNameEntryLabel.grid(row=0, column=0, sticky="sw")
-borrwerNameEntry.grid(row=1, column=0, columnspan=2)
+borrwerNameEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
+borrwerNameEntry.grid(row=2, column=0, columnspan=2)
 
 borrowerAddressEntry = tk.Entry(borrowerInputFrame)
 borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address")
-borrowerAddressEntryLabel.grid(row=2, column=0, sticky="sw")
-borrowerAddressEntry.grid(row=3, column=0)
+borrowerAddressEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
+borrowerAddressEntry.grid(row=4, column=0, columnspan=2)
 
 borrowerPhoneNumberEntry = tk.Entry(borrowerInputFrame)
 borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.")
-borrowerPhoneNumberLabel.grid(row=2, column=2, sticky="sw")
-borrowerPhoneNumberEntry.grid(row=3, column=2)
+borrowerPhoneNumberLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
+borrowerPhoneNumberEntry.grid(row=6, column=0, columnspan=2)
+
+Q2SubmitButton = tk.Button(borrowerInputFrame, text = 'Submit',
+                           command = 1+1).grid(row=7, column=0,columnspan=2, pady=10)
 #------------------------------
 
 #-- Query 3 --
-bookInputFrame = tk.Frame(tab3, background="white")
-bookInputFrame.grid(row=3, column=0, padx=20, pady=20)
+bookInputFrame2 = tk.Frame(tab3, background="white")
+bookInputFrame2.grid(row=0, column=0, padx=20, pady=20)
 
-bookNameEntry = tk.Entry(bookInputFrame)
-bookNameEntryLabel = tk.Label(bookInputFrame, text="Book Title")
-bookNameEntryLabel.grid(row=0, column=0, sticky='sw')
-bookNameEntry.grid(row=1, column=0, columnspan=2)
+Q3DescriptionLabel = tk.Label(bookInputFrame2,
+                              text="Add Book to System").grid(row=0, column=0, columnspan=2, pady=10)
 
-bookIDEntry = tk.Entry(bookInputFrame)
-bookIDEntryLabel = tk.Label(bookInputFrame, text="Book ID")
-bookIDEntryLabel.grid(row=0, column=2, sticky="sw")
-bookIDEntry.grid(row=1, column=2, columnspan=2)
+bookNameEntry = tk.Entry(bookInputFrame2)
+bookNameEntryLabel = tk.Label(bookInputFrame2, text="Book Title")
+bookNameEntryLabel.grid(row=1, column=0, columnspan=2, sticky='sw')
+bookNameEntry.grid(row=2, column=0, columnspan=2)
 
-bookPublisherEntry = tk.Entry(bookInputFrame)
-bookPublisherEntryLabel = tk.Label(bookInputFrame, text="Book Publisher")
-bookPublisherEntryLabel.grid(row=2, column=0, sticky="sw")
-bookPublisherEntry.grid(row=3, column=0, columnspan=2)
+# bookIDEntry = tk.Entry(bookInputFrame2)
+# bookIDEntryLabel = tk.Label(bookInputFrame2, text="Book ID")
+# bookIDEntryLabel.grid(row=1, column=2, columnspan=2, sticky="sw")
+# bookIDEntry.grid(row=2, column=2, columnspan=2)
 
-bookAuthorEntry = tk.Entry(bookInputFrame)
-bookAuthorEntryLabel = tk.Label(bookInputFrame, text="Book Author")
-bookAuthorEntryLabel.grid(row=2, column=2, sticky="sw")
-bookAuthorEntry.grid(row=3, column=2, columnspan=2)
+bookPublisherEntry = tk.Entry(bookInputFrame2)
+bookPublisherEntryLabel = tk.Label(bookInputFrame2, text="Book Publisher")
+bookPublisherEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
+bookPublisherEntry.grid(row=4, column=0, columnspan=2)
+
+bookAuthorEntry = tk.Entry(bookInputFrame2)
+bookAuthorEntryLabel = tk.Label(bookInputFrame2, text="Book Author")
+bookAuthorEntryLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
+bookAuthorEntry.grid(row=6, column=0, columnspan=2)
+
+Q3SubmitButton = tk.Button(bookInputFrame2, text = 'Submit',
+                           command = 1+1).grid(row=7, column=0,columnspan=2, pady=10)
 
 # -- Query 4 --
-bookCopiesPerBranchInput = tk.Frame(tab4, background=_skyblue)
-bookCopiesPerBranchInput.grid(row=0, column=0)
+bookCopiesPerBranchInputFrame = tk.Frame(tab4, background="white")
+bookCopiesPerBranchInputFrame.grid(row=0, column=0, padx=20, pady=20)
 
-bookTitleEntry = tk.Entry(bookCopiesPerBranchInput)
-bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInput, text="Title")
-bookTitleEntryLabel.grid(row=0, column=0, sticky="sw")
-bookTitleEntry.grid(row=1, column=0)
+Q4DescriptionLabel = tk.Label(bookCopiesPerBranchInputFrame,
+                              text="Search for a Book").grid(row=0, column=0, columnspan=2, pady=10)
+
+bookTitleEntry = tk.Entry(bookCopiesPerBranchInputFrame)
+bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInputFrame, text="Book Title")
+bookTitleEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
+bookTitleEntry.grid(row=2, column=0, columnspan=2)
+
+Q4SubmitButton = tk.Button(bookCopiesPerBranchInputFrame, text = 'Submit',
+                           command = 1+1).grid(row=7, column=0,columnspan=2, pady=10)
+
+# -- Query 5 --
+dueDatesInputFrame = tk.Frame(tab5, background="white")
+dueDatesInputFrame.grid(row=0, column=0, padx=20, pady=20)
+
+Q5DescriptionLabel = tk.Label(dueDatesInputFrame,
+                              text="Search for Late Returns").grid(row=0, column=0, columnspan=2, pady=10)
+
+tk.Label(dueDatesInputFrame, text= "Choose a Start Date").grid(row=1, column=0, columnspan=2, sticky="sw")
+cal1 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
+cal1.grid(row=2, column=0, columnspan=2, sticky="sw")
+
+tk.Label(dueDatesInputFrame, text= "Choose an End Date").grid(row=3, column=0, columnspan=2, sticky="sw")
+cal2 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
+cal2.grid(row=4, column=0, columnspan=2, sticky="sw")
+
+Q5SubmitButton = tk.Button(dueDatesInputFrame, text = 'Submit',
+                           command = 1+1).grid(row=5, column=0,columnspan=2, pady=10)
 
 # main_frame = tk.Frame(LMS_GUI_WINDOW)
 # main_frame.pack(fill=tk.BOTH, expand=1)
