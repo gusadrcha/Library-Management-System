@@ -63,17 +63,20 @@ def Q1Submit():
                 Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
                                  (tempBook[0][0],tempBranch[0][0],))
                 tempCopyNum = Q1Cursor.fetchall()
-                if(int(tempCopyNum[0][0]) > 0):
-                    Q1Cursor.execute("INSERT INTO Book_Loans VALUES (?,?,?,?,?,?)",
-                                    (bookIDEntry.get(),libraryBranchIDEntry.get(),bookBorrowerEntry.get(),date.today(),date.today()+timedelta(days=30),None,))
-                    Q1Cursor.execute("UPDATE Book_copies SET No_of_copies = No_of_copies-1 WHERE Book_id = ? AND Branch_id = ?",
-                                    (tempBook[0][0],tempBranch[0][0],))
-                    Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
-                                    (tempBook[0][0],tempBranch[0][0],))
-                    results = Q1Cursor.fetchall()
-                    resultsLabel = tk.Label(bookInputFrame1, text=results[0]+" copies left", background="white").grid(row=1, column=2, columnspan=2)
+                if(tempCopyNum):
+                    if(int(tempCopyNum[0][0]) > 0):
+                        Q1Cursor.execute("INSERT INTO Book_Loans VALUES (?,?,?,?,?,?)",
+                                        (bookIDEntry.get(),libraryBranchIDEntry.get(),bookBorrowerEntry.get(),date.today(),date.today()+timedelta(days=30),None,))
+                        Q1Cursor.execute("UPDATE Book_copies SET No_of_copies = No_of_copies-1 WHERE Book_id = ? AND Branch_id = ?",
+                                        (tempBook[0][0],tempBranch[0][0],))
+                        Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
+                                        (tempBook[0][0],tempBranch[0][0],))
+                        results = Q1Cursor.fetchall()
+                        resultsLabel = tk.Label(bookInputFrame1, text=str(results[0][0])+" copies left", background="white").grid(row=1, column=2, columnspan=2)
+                    else:
+                        Q1error5 = tk.Label(bookInputFrame1, text="0 Copies at Specified Branch").grid(row=1, column=2, columnspan=2)
                 else:
-                    Q1error4 = tk.Label(bookInputFrame1, text="0 Copies at Specified Branch").grid(row=1, column=2, columnspan=2)
+                    Q1error4 = tk.Label(bookInputFrame1, text="Specified Branch does not have Requested Book").grid(row=1, column=2, columnspan=2)
             else:
                 Q1error3 = tk.Label(bookInputFrame1, text="Invalid Card No.").grid(row=1, column=2, columnspan=2)
         else:
@@ -179,14 +182,14 @@ def Q3Submit():
     Q3Connection.commit()
     Q3Connection.close()
 
-def Q3InputQuery():
-    pass
-
 bookInputFrame2 = tk.Frame(tab3, background="white")
 bookInputFrame2.grid(row=0, column=0, padx=20, pady=20)
 
 Q3DescriptionLabel = tk.Label(bookInputFrame2,
-                              text="Add Book to System").grid(row=0, column=0, columnspan=2, pady=10)
+                              text="Add Book to System").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+
+Q3OutputLabel = tk.Label(bookInputFrame2,
+                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
 
 Q3bookTitleEntry = tk.Entry(bookInputFrame2)
 Q3bookTitleEntryLabel = tk.Label(bookInputFrame2, text="Book Title")
@@ -221,14 +224,14 @@ def Q4Submit():
     Q4Connection.commit()
     Q4Connection.close()
 
-def Q4InputQuery():
-    pass
-
 bookCopiesPerBranchInputFrame = tk.Frame(tab4, background="white")
 bookCopiesPerBranchInputFrame.grid(row=0, column=0, padx=20, pady=20)
 
 Q4DescriptionLabel = tk.Label(bookCopiesPerBranchInputFrame,
-                              text="Search for a Book").grid(row=0, column=0, columnspan=2, pady=10)
+                              text="Search for a Book").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+
+Q4OutputLabel = tk.Label(bookCopiesPerBranchInputFrame,
+                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
 
 Q4bookTitleEntry = tk.Entry(bookCopiesPerBranchInputFrame)
 Q4bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInputFrame, text="Book Title")
@@ -248,14 +251,14 @@ def Q5Submit():
     Q5Connection.commit()
     Q5Connection.close()
 
-def Q5InputQuery():
-    pass
-
 dueDatesInputFrame = tk.Frame(tab5, background="white")
 dueDatesInputFrame.grid(row=0, column=0, padx=20, pady=20)
 
 Q5DescriptionLabel = tk.Label(dueDatesInputFrame,
-                              text="Search for Late Returns").grid(row=0, column=0, columnspan=2, pady=10)
+                              text="Search for Late Returns").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+
+Q5OutputLabel = tk.Label(dueDatesInputFrame,
+                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
 
 tk.Label(dueDatesInputFrame, text= "Choose a Start Date").grid(row=1, column=0, columnspan=2, sticky="sw")
 cal1 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
