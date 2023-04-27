@@ -128,8 +128,6 @@ def Q2Submit():
     Q2Connection = sqlite3.connect("LMS.db")
     Q2Cursor = Q2Connection.cursor()
 
-    print()
-
     if(len(str(borrowerPhoneNumberEntry.get())) != 10):
         Q2error1 = tk.Label(borrowerInputFrame, text="Invalid Phone Number").grid(row=1, column=2, columnspan=2)
     else:
@@ -177,7 +175,20 @@ def Q3Submit():
     Q3Connection = sqlite3.connect("LMS.db")
     Q3Cursor = Q3Connection.cursor()
 
-    Q3Cursor.execute("")
+    Q3Cursor.execute("SELECT Book_id FROM Book WHERE Title = ? AND Book_publisher = ?",(Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
+    alreadyExists = Q3Cursor.fetchall()
+    if(alreadyExists):
+        Q3error1 = tk.Label(bookInputFrame2, text="Already in System").grid(row=1, column=2, columnspan=2)
+    else:
+        Q3Cursor.execute("INSERT INTO Book VALUES (?,?,?)",(None,Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
+        Q3Cursor.execute("SELECT Book_id FROM Book WHERE Title = ? AND Book_publisher = ?",(Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
+        tempBookID = Q3Cursor.fetchall()
+        Q3Cursor.execute("INSERT INTO Book_authors VALUES (?,?)",(tempBookID[0][0],bookAuthorEntry.get(),))
+        Q3Cursor.execute("SELECT Branch_id FROM Library_branch")
+        branchList = Q3Cursor.fetchall()
+        for branch in branchList:
+            Q3Cursor.execute("INSERT INTO Book_copies VALUES (?,?,?)",(tempBookID[0][0],branch[0],5,))
+        Q3OutputLabel = tk.Label(bookInputFrame2, text="Successfully Added!").grid(row=1, column=2, columnspan=2)
 
     Q3Connection.commit()
     Q3Connection.close()
