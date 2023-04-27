@@ -71,7 +71,7 @@ def Q1Submit():
                     Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
                                     (tempBook[0][0],tempBranch[0][0],))
                     results = Q1Cursor.fetchall()
-                    resultsLabel = tk.Label(bookInputFrame1, text=results[0]).grid(row=1, column=2, columnspan=2)
+                    resultsLabel = tk.Label(bookInputFrame1, text=results[0]+" copies left", background="white").grid(row=1, column=2, columnspan=2)
                 else:
                     Q1error4 = tk.Label(bookInputFrame1, text="0 Copies at Specified Branch").grid(row=1, column=2, columnspan=2)
             else:
@@ -84,9 +84,6 @@ def Q1Submit():
 
     Q1Connection.commit()
     Q1Connection.close()
-
-def Q1InputQuery():
-    pass
 
 bookInputFrame1 = tk.Frame(tab1, background="white")
 bookInputFrame1.grid(row=0, column=0, padx=20, pady=20)
@@ -128,19 +125,30 @@ def Q2Submit():
     Q2Connection = sqlite3.connect("LMS.db")
     Q2Cursor = Q2Connection.cursor()
 
-    Q2Cursor.execute("")
+    print()
+
+    if(len(str(borrowerPhoneNumberEntry.get())) != 10):
+        Q2error1 = tk.Label(borrowerInputFrame, text="Invalid Phone Number").grid(row=1, column=2, columnspan=2)
+    else:
+        Q2Cursor.execute("INSERT INTO Borrower VALUES (?,?,?,?)",
+                        (None,borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
+        Q2Cursor.execute("SELECT Card_no FROM Borrower WHERE name = ? AND address = ? AND phone_number = ?",
+                        (borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
+        
+        results = Q2Cursor.fetchall()
+        resultsLabel = tk.Label(borrowerInputFrame, text="New Card: "+str(results[0][0])).grid(row=1, column=2, columnspan=2)
 
     Q2Connection.commit()
     Q2Connection.close()
-
-def Q2InputQuery():
-    pass
 
 borrowerInputFrame = tk.Frame(tab2, background="white")
 borrowerInputFrame.grid(row=0, column=0, padx=20, pady=20)
 
 Q2DescriptionLabel = tk.Label(borrowerInputFrame,
-                              text="Create Library Account").grid(row=0, column=0, columnspan=2, pady=10)
+                              text="Create Library Account").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+
+Q2OutputLabel = tk.Label(borrowerInputFrame,
+                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
 
 borrowerNameEntry = tk.Entry(borrowerInputFrame)
 borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name")
