@@ -71,8 +71,8 @@ def Q1Submit():
                                         (tempBook[0][0],tempBranch[0][0],))
                         Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
                                         (tempBook[0][0],tempBranch[0][0],))
-                        results = Q1Cursor.fetchall()
-                        resultsLabel = tk.Label(bookInputFrame1, text=str(results[0][0])+" copies left", background="white").grid(row=1, column=2, columnspan=2)
+                        Q1results = Q1Cursor.fetchall()
+                        Q1resultsLabel = tk.Label(bookInputFrame1, text=str(Q1results[0][0])+" copies left", background="white").grid(row=1, column=2, columnspan=2)
                     else:
                         Q1error5 = tk.Label(bookInputFrame1, text="0 Copies at Specified Branch").grid(row=1, column=2, columnspan=2)
                 else:
@@ -138,8 +138,8 @@ def Q2Submit():
         Q2Cursor.execute("SELECT Card_no FROM Borrower WHERE name = ? AND address = ? AND phone_number = ?",
                         (borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
         
-        results = Q2Cursor.fetchall()
-        resultsLabel = tk.Label(borrowerInputFrame, text="New Card: "+str(results[0][0])).grid(row=1, column=2, columnspan=2)
+        Q2results = Q2Cursor.fetchall()
+        Q2resultsLabel = tk.Label(borrowerInputFrame, text="New Card: "+str(Q2results[0][0])).grid(row=1, column=2, columnspan=2)
 
     Q2Connection.commit()
     Q2Connection.close()
@@ -219,7 +219,20 @@ def Q4Submit():
     Q4Connection = sqlite3.connect("LMS.db")
     Q4Cursor = Q4Connection.cursor()
 
-    Q4Cursor.execute("")
+    Q4Cursor.execute("SELECT Book_id FROM Book WHERE Title = ?",(Q4bookTitleEntry.get(),))
+    tempBookID = Q4Cursor.fetchall()
+    if(tempBookID):
+        Q4Cursor.execute("SELECT Branch_id, No_of_copies FROM Book_copies WHERE Book_id = ? GROUP BY Branch_id",(str(tempBookID[0][0])),)
+        Q4results = Q4Cursor.fetchall()
+        if(Q4results):
+            Q4PrintResults = "Branch# : Amount\n"
+            for result in Q4results:
+                Q4PrintResults += str(result[0])+" : "+str(result[1])+"\n"
+            Q4resultsLabel = tk.Label(bookCopiesPerBranchInputFrame, text=Q4PrintResults).grid(row=1, column=2, columnspan=2)
+        else:
+            Q4error2 = tk.Label(bookCopiesPerBranchInputFrame, text="Book No Longer Held").grid(row=1, column=2, columnspan=2)
+    else:
+        Q4error1 = tk.Label(bookCopiesPerBranchInputFrame, text="Invalid Book Title").grid(row=1, column=2, columnspan=2)
 
     Q4Connection.commit()
     Q4Connection.close()
