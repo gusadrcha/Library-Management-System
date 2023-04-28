@@ -270,10 +270,22 @@ def Q5Submit():
     Q5Connection = sqlite3.connect("LMS.db")
     Q5Cursor = Q5Connection.cursor()
 
-    Q5Cursor.execute("")
-
+    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?",(Q5Start_Date.get(),Q5End_Date.get(),))
+    Q5Range = Q5Cursor.fetchall()
+    if(Q5Range):
+        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) as Late FROM Book_loans "
+                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",(Q5Start_Date.get(),Q5End_Date.get(),))
+        Q5Results = Q5Cursor.fetchall()
+        if(Q5Results):
+            Q5PrintResults = "BookID : Late\n"
+            for result in Q5results:
+                Q5PrintResults += str(result[0])+" : "+str(result[1])+"\n"
+            Q5resultsLabel = tk.Label(dueDatesInputFrame, text=Q4PrintResults).grid(row=1, column=2, columnspan=2)
+    else:
+        Q4error1 = tk.Label(dueDatesInputFrame, text="Invalid Date").grid(row=1, column=2, columnspan=2)
     Q5Connection.commit()
     Q5Connection.close()
+
 
 dueDatesInputFrame = tk.Frame(tab5, background="white")
 dueDatesInputFrame.grid(row=0, column=0, padx=20, pady=20)
@@ -287,10 +299,12 @@ Q5OutputLabel = tk.Label(dueDatesInputFrame,
 tk.Label(dueDatesInputFrame, text= "Choose a Start Date").grid(row=1, column=0, columnspan=2, sticky="sw")
 cal1 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
 cal1.grid(row=2, column=0, columnspan=2, sticky="sw")
+Q5Start_Date = tk.Entry(dueDatesInputFrame)
 
 tk.Label(dueDatesInputFrame, text= "Choose an End Date").grid(row=3, column=0, columnspan=2, sticky="sw")
 cal2 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
 cal2.grid(row=4, column=0, columnspan=2, sticky="sw")
+Q5End_Date = tk.Entry(dueDatesInputFrame)
 
 Q5SubmitButton = tk.Button(dueDatesInputFrame, text = 'Submit',
                            command = Q5Submit).grid(row=5, column=0,columnspan=2, pady=10)
