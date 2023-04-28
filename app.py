@@ -270,19 +270,25 @@ def Q5Submit():
     Q5Connection = sqlite3.connect("LMS.db")
     Q5Cursor = Q5Connection.cursor()
 
-    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?",(Q5Start_Date.get(),Q5End_Date.get(),))
+    temp1 = cal1.get_date()
+    temp2 = cal2.get_date()
+    fixedStartDate = temp1.strftime("%Y-%m-%d")
+    fixedEndDate = temp2.strftime("%Y-%m-%d")
+
+    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?",(fixedStartDate,fixedEndDate,))
     Q5Range = Q5Cursor.fetchall()
     if(Q5Range):
-        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) as Late FROM Book_loans "
-                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",(Q5Start_Date.get(),Q5End_Date.get(),))
+        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) as Late FROM Book_loans" 
+                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",(fixedStartDate,fixedStartDate,))
         Q5Results = Q5Cursor.fetchall()
+        print(Q5Results)
         if(Q5Results):
             Q5PrintResults = "BookID : Late\n"
-            for result in Q5results:
+            for result in Q5Results:
                 Q5PrintResults += str(result[0])+" : "+str(result[1])+"\n"
-            Q5resultsLabel = tk.Label(dueDatesInputFrame, text=Q4PrintResults).grid(row=1, column=2, columnspan=2)
+            Q5resultsLabel = tk.Label(dueDatesInputFrame, text=Q5PrintResults).grid(row=1, column=2, columnspan=2)
     else:
-        Q4error1 = tk.Label(dueDatesInputFrame, text="Invalid Date").grid(row=1, column=2, columnspan=2)
+        Q5error1 = tk.Label(dueDatesInputFrame, text="Invalid Date").grid(row=1, column=2, columnspan=2)
     Q5Connection.commit()
     Q5Connection.close()
 
