@@ -273,7 +273,6 @@ def Q5Submit():
     start_date = datetime.strptime(start_date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
     end_date_str = cal2.get_date().strftime('%m/%d/%Y')
     end_date = datetime.strptime(end_date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
-
     Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?", (start_date, end_date,))
     Q5Range = Q5Cursor.fetchall()
     if Q5Range:
