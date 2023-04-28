@@ -278,8 +278,7 @@ def Q5Submit():
     Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?",(fixedStartDate,fixedEndDate,))
     Q5Range = Q5Cursor.fetchall()
     if(Q5Range):
-        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) as Late FROM Book_loans" 
-                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",(fixedStartDate,fixedStartDate,))
+        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) as Late FROM Book_loans WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",(fixedStartDate,fixedStartDate,))
         Q5Results = Q5Cursor.fetchall()
         print(Q5Results)
         if(Q5Results):
