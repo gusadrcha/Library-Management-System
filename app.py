@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar, DateEntry
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import sqlite3
 
 _white = "#ffffff"
@@ -135,7 +135,7 @@ def Q2Submit():
                         (None,borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
         Q2Cursor.execute("SELECT Card_no FROM Borrower WHERE name = ? AND address = ? AND phone_number = ?",
                         (borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
-        
+
         Q2results = Q2Cursor.fetchall()
         Q2resultsLabel = tk.Label(borrowerInputFrame, text="New Card: "+str(Q2results[0][0])).grid(row=1, column=2, columnspan=2)
 
@@ -269,20 +269,28 @@ Q4SubmitButton = tk.Button(bookCopiesPerBranchInputFrame, text = 'Submit',
 def Q5Submit():
     Q5Connection = sqlite3.connect("LMS.db")
     Q5Cursor = Q5Connection.cursor()
+    start_date_str = cal1.get_date().strftime('%m/%d/%Y')
+    start_date = datetime.strptime(start_date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
+    end_date_str = cal2.get_date().strftime('%m/%d/%Y')
+    end_date = datetime.strptime(end_date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
 
-    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?",(Q5Start_Date.get(),Q5End_Date.get(),))
+    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?", (start_date, end_date,))
     Q5Range = Q5Cursor.fetchall()
-    if(Q5Range):
-        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) as Late FROM Book_loans "
-                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",(Q5Start_Date.get(),Q5End_Date.get(),))
+    if Q5Range:
+        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) AS days_late "
+                         "FROM Book_loans "
+                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",
+                         (start_date, end_date,))
         Q5Results = Q5Cursor.fetchall()
-        if(Q5Results):
+        if Q5Results:
             Q5PrintResults = "BookID : Late\n"
-            for result in Q5results:
-                Q5PrintResults += str(result[0])+" : "+str(result[1])+"\n"
-            Q5resultsLabel = tk.Label(dueDatesInputFrame, text=Q4PrintResults).grid(row=1, column=2, columnspan=2)
+            for result in Q5Results:
+                Q5PrintResults += str(result[0]) + " : " + str(result[1]) + "\n"
+            Q5resultsLabel = tk.Label(dueDatesInputFrame, text=Q5PrintResults).grid(row=1, column=2, columnspan=2)
+        else:
+            Q5error1 = tk.Label(dueDatesInputFrame, text="No late returns found").grid(row=1, column=2, columnspan=2)
     else:
-        Q4error1 = tk.Label(dueDatesInputFrame, text="Invalid Date").grid(row=1, column=2, columnspan=2)
+        Q5error2 = tk.Label(dueDatesInputFrame, text="Invalid Date Range").grid(row=1, column=2, columnspan=2)
     Q5Connection.commit()
     Q5Connection.close()
 
@@ -294,20 +302,19 @@ Q5DescriptionLabel = tk.Label(dueDatesInputFrame,
                               text="Search for Late Returns").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
 Q5OutputLabel = tk.Label(dueDatesInputFrame,
-                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
+                          text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
 
-tk.Label(dueDatesInputFrame, text= "Choose a Start Date").grid(row=1, column=0, columnspan=2, sticky="sw")
-cal1 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
+tk.Label(dueDatesInputFrame, text="Choose a Start Date").grid(row=1, column=0, columnspan=2, sticky="sw")
+cal1 = DateEntry(dueDatesInputFrame, width=16, background="magenta3", foreground="white", bd=2)
 cal1.grid(row=2, column=0, columnspan=2, sticky="sw")
-Q5Start_Date = tk.Entry(dueDatesInputFrame)
+Q5Start_Date = cal1
 
-tk.Label(dueDatesInputFrame, text= "Choose an End Date").grid(row=3, column=0, columnspan=2, sticky="sw")
-cal2 = DateEntry(dueDatesInputFrame, width= 16, background= "magenta3", foreground= "white",bd=2)
+tk.Label(dueDatesInputFrame, text="Choose an End Date").grid(row=3, column=0, columnspan=2, sticky="sw")
+cal2 = DateEntry(dueDatesInputFrame, width=16, background="magenta3", foreground="white", bd=2)
 cal2.grid(row=4, column=0, columnspan=2, sticky="sw")
-Q5End_Date = tk.Entry(dueDatesInputFrame)
+Q5End_Date = cal2
 
-Q5SubmitButton = tk.Button(dueDatesInputFrame, text = 'Submit',
-                           command = Q5Submit).grid(row=5, column=0,columnspan=2, pady=10)
-
+Q5SubmitButton = tk.Button(dueDatesInputFrame, text='Submit',
+                           command=Q5Submit).grid(row=5, column=0, columnspan=2, pady=10)
 # creates the mainloop of the GUI
 LMS_GUI_WINDOW.mainloop()
