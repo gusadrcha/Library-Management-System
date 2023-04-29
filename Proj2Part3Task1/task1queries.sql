@@ -21,3 +21,24 @@ WHERE EXISTS (
     AND BL.Returned_date > BL.Due_date
 );
 
+-- View --
+CREATE VIEW BookLoanInfo AS
+SELECT BL.Card_no AS Card_No,
+       BR.name as "Borrower Name",
+       BL.Date_out as Date_Out,
+       BL.Due_date as Due_Date,
+       BL.Returned_date,
+       (JulianDay(BL.Returned_date) - JulianDay(BL.Date_out)) as "TotalDays",
+       BK.Title as "Book Title",
+       CASE
+         WHEN BL.Returned_date <= BL.Due_date THEN 0
+         ELSE JulianDay(BL.Returned_date) - JulianDay(BL.Due_date)
+       END AS "Number of days later return",
+       BL.Branch_id,
+       CASE
+         WHEN BL.Returned_date <= BL.Due_date THEN 0
+         ELSE (JulianDay(BL.Returned_date) - JulianDay(BL.Due_date)) * 10
+       END AS LateFeeBalance
+FROM Book_Loans BL
+JOIN Borrower BR ON BL.Card_no = BR.Card_no
+JOIN Book BK ON BL.Book_id = BK.Book_id;
