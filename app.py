@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter.font import Font
 from tkcalendar import Calendar, DateEntry
 from datetime import date, timedelta, datetime
 import sqlite3
@@ -29,6 +30,10 @@ LMS_GUI_WINDOW.iconbitmap("book-icon-file-13.jpg")
 # set the title of the GUI
 LMS_GUI_WINDOW.title("Library Management System")
 
+defaultFont = Font(family='Times',
+                   size=16)
+
+# create the main tab window and view
 tabControl = ttk.Notebook(LMS_GUI_WINDOW)
 
 tab1 = ttk.Frame(tabControl)
@@ -48,6 +53,20 @@ tabControl.pack(expand=1, fill='both')
 # -- Query 1 --
 # book input frame that holds all book entries-----------------
 def Q1Submit():
+    global errorLabel
+    global tree1
+    global resultLabel
+
+    if tree1.winfo_exists:
+        tree1.pack_forget()
+
+    if errorLabel.winfo_exists:
+        print("LABEL EXISTS REMOVING NOW")
+        errorLabel.pack_forget()
+    
+    if resultLabel.winfo_exists:
+        resultLabel.pack_forget()
+
     Q1Connection = sqlite3.connect("LMS.db")
     Q1Cursor = Q1Connection.cursor()
 
@@ -72,64 +91,124 @@ def Q1Submit():
                         Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
                                         (tempBook[0][0],tempBranch[0][0],))
                         Q1results = Q1Cursor.fetchall()
-                        Q1resultsLabel = tk.Label(bookInputFrame1, text=str(Q1results[0][0])+" copies left", background="white").grid(row=1, column=2, columnspan=2)
+                        resultLabel = tk.Label(queryOneOutputFrame, text=str(Q1results[0][0])+" copies left", background="white").pack(side="top")
                     else:
-                        Q1error5 = tk.Label(bookInputFrame1, text="0 Copies at Specified Branch").grid(row=1, column=2, columnspan=2)
+                        errorLabel = tk.Label(queryOneOutputFrame, text="0 Copies at Specified Branch")
+                        errorLabel.pack(fill="both")
                 else:
-                    Q1error4 = tk.Label(bookInputFrame1, text="Specified Branch does not have Requested Book").grid(row=1, column=2, columnspan=2)
+                    errorLabel = tk.Label(queryOneOutputFrame, text="Specified Branch does not have Requested Book")
+                    errorLabel.pack(fill="both")
             else:
-                Q1error3 = tk.Label(bookInputFrame1, text="Invalid Card No.").grid(row=1, column=2, columnspan=2)
+                errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Card No.")
+                errorLabel.pack(fill="both")
         else:
-            Q1error2 = tk.Label(bookInputFrame1, text="Invalid Branch ID").grid(row=1, column=2, columnspan=2)
+            errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Branch ID")
+            errorLabel.pack(fill="both")
     else:
-        Q1error1 = tk.Label(bookInputFrame1, text="Invalid Book ID").grid(row=1, column=2, columnspan=2)
+        errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Book ID")
+        errorLabel.pack(fill="both")
 
 
     Q1Connection.commit()
     Q1Connection.close()
 
-bookInputFrame1 = tk.Frame(tab1, background="white")
-bookInputFrame1.grid(row=0, column=0, padx=20, pady=20)
+def displayQ1Result():
+    global tree1
+    global errorLabel
+
+    if tree1.winfo_exists:
+        for item in tree1.get_children():
+            tree1.delete(item)
+        tree1.pack_forget()
+    
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget() 
+
+    tree1.heading("1", text="Book_id")
+    tree1.heading("2", text="Branch_id")
+    tree1.heading("3", text= "Card_no")
+    tree1.heading("4", text="Date_out")
+    tree1.heading("5", text="Due_date")
+    tree1.heading("6", text="Returned_date")
+
+    print(len(tree1.get_children()))
+
+    r1Connect = sqlite3.connect("LMS.db")
+    r1cursor = r1Connect.cursor()
+
+    r1cursor.execute("SELECT * FROM book_loans")
+
+    rows = r1cursor.fetchall()
+
+    for row in rows:
+        print(row)
+        tree1.insert("", tk.END, values=row)
+    tree1.pack()
+
+    r1Connect.commit()
+    r1Connect.close()
+
+bookInputFrame1 = tk.Frame(tab1, background=_navyblue)
+bookInputFrame1.pack(side=tk.LEFT, fill="both", expand=False)
+
+queryOneOutputFrame = tk.Frame(tab1, background=_skyblue)
+queryOneOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 # T = Text(root, bg, fg, bd, height, width, font, ..)
-Q1DescriptionLabel = tk.Label(bookInputFrame1,
-                              text="Check Out a Book").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=defaultFont, background=_navyblue, fg=_white).grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q1OutputLabel = tk.Label(bookInputFrame1,
-                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
-
-# bookNameEntry = tk.Entry(bookInputFrame1)
-# bookNameEntryLabel = tk.Label(bookInputFrame1, text="Book Title")
-# bookNameEntryLabel.grid(row=1, column=0, sticky='sw')
-# bookNameEntry.grid(row=2, column=0, columnspan=2)
+Q1OutputLabel = tk.Label(queryOneOutputFrame, text="Output", font=defaultFont).pack(side=tk.TOP)
 
 bookIDEntry = tk.Entry(bookInputFrame1)
-bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID")
+bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID", font=defaultFont, background=_navyblue, fg=_white)
 bookIDEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
 bookIDEntry.grid(row=2, column=0, columnspan=2)
 
 libraryBranchIDEntry = tk.Entry(bookInputFrame1)
-libraryBranchIDEntryLabel = tk.Label(bookInputFrame1, text="Branch ID")
+libraryBranchIDEntryLabel = tk.Label(bookInputFrame1, text="Branch ID", font=defaultFont, background=_navyblue, fg=_white)
 libraryBranchIDEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
 libraryBranchIDEntry.grid(row=4, column=0, columnspan=2)
 
 bookBorrowerEntry = tk.Entry(bookInputFrame1)
-bookBorrowerEntryLabel = tk.Label(bookInputFrame1, text="Card No.")
+bookBorrowerEntryLabel = tk.Label(bookInputFrame1, text="Card No.", font=defaultFont, background=_navyblue, fg=_white)
 bookBorrowerEntryLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
 bookBorrowerEntry.grid(row=6, column=0, columnspan=2)
 
-Q1SubmitButton = tk.Button(bookInputFrame1, text = 'Submit',
-                           command = Q1Submit).grid(row=7, column=0,columnspan=2, pady=10)
+Q1SubmitButton = tk.Button(bookInputFrame1, text = 'Submit', font=defaultFont, command = Q1Submit).grid(row=7, column=0, pady=10)
+
+Q1ViewButton = tk.Button(bookInputFrame1, text="View", font=defaultFont, command=displayQ1Result)
+Q1ViewButton.grid(row=7, column=1, pady=10)
+
 # ----------------------------------
 
 # -- Query 2 --
 # borrower input frame that holds all borrower entries --------------
 def Q2Submit():
+    global errorLabel
+    global tree2
+    global resultLabel
+
+    if tree2.winfo_exists:
+        tree2.pack_forget()
+
+    if errorLabel.winfo_exists:
+        print("LABEL EXISTS REMOVING NOW")
+        errorLabel.pack_forget()
+    
+    if resultLabel.winfo_exists:
+        resultLabel.pack_forget()
+
     Q2Connection = sqlite3.connect("LMS.db")
     Q2Cursor = Q2Connection.cursor()
 
-    if(len(str(borrowerPhoneNumberEntry.get())) != 10):
-        Q2error1 = tk.Label(borrowerInputFrame, text="Invalid Phone Number").grid(row=1, column=2, columnspan=2)
+    if not str(borrowerNameEntry.get()):
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name")
+        errorLabel.pack(side="top")
+    
+    elif(len(str(borrowerPhoneNumberEntry.get())) != 10):
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number")
+        errorLabel.pack(side="top")
+
     else:
         Q2Cursor.execute("INSERT INTO Borrower VALUES (?,?,?,?)",
                         (None,borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
@@ -137,37 +216,78 @@ def Q2Submit():
                         (borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
 
         Q2results = Q2Cursor.fetchall()
-        Q2resultsLabel = tk.Label(borrowerInputFrame, text="New Card: "+str(Q2results[0][0])).grid(row=1, column=2, columnspan=2)
+        resultLabel = tk.Label(queryTwoOutputFrame, text="New Card: "+str(Q2results[0][0]))
+        resultLabel.pack(side="top")
 
     Q2Connection.commit()
     Q2Connection.close()
 
-borrowerInputFrame = tk.Frame(tab2, background="white")
-borrowerInputFrame.grid(row=0, column=0, padx=20, pady=20)
+def displayQ2Results():
+    global tree2
+    global errorLabel
 
-Q2DescriptionLabel = tk.Label(borrowerInputFrame,
-                              text="Create Library Account").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=defaultFont)
+    # style.configure("Treeview", font=defaultFont)
 
-Q2OutputLabel = tk.Label(borrowerInputFrame,
-                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
+    if tree2.winfo_exists:
+        for item in tree2.get_children():
+            tree2.delete(item)
+        tree2.pack_forget()
+    
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget() 
 
-borrowerNameEntry = tk.Entry(borrowerInputFrame)
-borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name")
+    tree2.heading("1", text= "Card_no")
+    tree2.heading("2", text="Name")
+    tree2.heading("3", text="Address")
+
+    print(len(tree2.get_children()))
+
+    r1Connect = sqlite3.connect("LMS.db")
+    r1cursor = r1Connect.cursor()
+
+    r1cursor.execute("SELECT * FROM borrower")
+
+    rows = r1cursor.fetchall()
+
+    for row in rows:
+        print(row)
+        tree2.insert("", tk.END, values=row)
+    tree2.pack()
+
+    r1Connect.commit()
+    r1Connect.close()
+
+borrowerInputFrame = tk.Frame(tab2, background=_navyblue)
+borrowerInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
+
+queryTwoOutputFrame = tk.Frame(tab2, background=_skyblue)
+queryTwoOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
+
+Q2DescriptionLabel = tk.Label(borrowerInputFrame, text="Create Library Account", font=defaultFont).grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+
+Q2OutputLabel = tk.Label(queryTwoOutputFrame, text="Output", font=defaultFont)
+Q2OutputLabel.pack(side="top")
+
+borrowerNameEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
+borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name", font=defaultFont)
 borrowerNameEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
 borrowerNameEntry.grid(row=2, column=0, columnspan=2)
 
-borrowerAddressEntry = tk.Entry(borrowerInputFrame)
-borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address")
+borrowerAddressEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
+borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address", font=defaultFont)
 borrowerAddressEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
 borrowerAddressEntry.grid(row=4, column=0, columnspan=2)
 
-borrowerPhoneNumberEntry = tk.Entry(borrowerInputFrame)
-borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.")
+borrowerPhoneNumberEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
+borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.", font=defaultFont)
 borrowerPhoneNumberLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
 borrowerPhoneNumberEntry.grid(row=6, column=0, columnspan=2)
 
-Q2SubmitButton = tk.Button(borrowerInputFrame, text = 'Submit',
-                           command = Q2Submit).grid(row=7, column=0,columnspan=2, pady=10)
+Q2SubmitButton = tk.Button(borrowerInputFrame, text = 'Submit', font=defaultFont, command = Q2Submit).grid(row=7, column=0,columnspan=2, pady=10)
+
+Q2ViewButton = tk.Button(borrowerInputFrame, text = 'View', font=defaultFont, command = displayQ2Results).grid(row=7, column=2,columnspan=2, pady=10)
 #------------------------------
 
 #-- Query 3 --
@@ -316,5 +436,18 @@ Q5End_Date = cal2
 
 Q5SubmitButton = tk.Button(dueDatesInputFrame, text='Submit',
                            command=Q5Submit).grid(row=5, column=0, columnspan=2, pady=10)
+
+# global variables
+
+errorLabel = tk.Label()
+resultLabel = tk.Label()
+resultFrame: tk.Frame()
+
+tree1 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
+tree2 = ttk.Treeview(queryTwoOutputFrame, columns=("1", "2","3"), show='headings')
+tree3 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
+tree4 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
+tree5 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
+
 # creates the mainloop of the GUI
 LMS_GUI_WINDOW.mainloop()
