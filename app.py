@@ -202,11 +202,15 @@ def Q2Submit():
     Q2Cursor = Q2Connection.cursor()
 
     if not str(borrowerNameEntry.get()):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name")
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name", font=defaultFont)
         errorLabel.pack(side="top")
     
     elif(len(str(borrowerPhoneNumberEntry.get())) != 10):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number")
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number", font=defaultFont)
+        errorLabel.pack(side="top")
+
+    elif not str(borrowerAddressEntry.get()):
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter an Address", font=defaultFont)
         errorLabel.pack(side="top")
 
     else:
