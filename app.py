@@ -90,21 +90,22 @@ def Q1Submit():
                         Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
                                         (tempBook[0][0],tempBranch[0][0],))
                         Q1results = Q1Cursor.fetchall()
-                        resultLabel = tk.Label(queryOneOutputFrame, text=str(Q1results[0][0])+" copies left", background="white").pack(side="top")
+                        resultLabel = tk.Label(queryOneOutputFrame, text=str(Q1results[0][0])+" copies left", font=defaultFont, bg=_skyblue, fg=_black)
+                        resultLabel.pack(side="top")
                     else:
-                        errorLabel = tk.Label(queryOneOutputFrame, text="0 Copies at Specified Branch")
+                        errorLabel = tk.Label(queryOneOutputFrame, text="0 Copies at Specified Branch", font=defaultFont, bg=_skyblue, fg=_black)
                         errorLabel.pack(fill="both")
                 else:
-                    errorLabel = tk.Label(queryOneOutputFrame, text="Specified Branch does not have Requested Book")
+                    errorLabel = tk.Label(queryOneOutputFrame, text="Specified Branch does not have Requested Book", font=defaultFont, bg=_skyblue, fg=_black)
                     errorLabel.pack(fill="both")
             else:
-                errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Card No.")
+                errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Card No.", font=defaultFont, bg=_skyblue, fg=_black)
                 errorLabel.pack(fill="both")
         else:
-            errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Branch ID")
+            errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Branch ID", font=defaultFont, bg=_skyblue, fg=_black)
             errorLabel.pack(fill="both")
     else:
-        errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Book ID")
+        errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Book ID", font=defaultFont, bg=_skyblue, fg=_black)
         errorLabel.pack(fill="both")
 
 
@@ -142,7 +143,7 @@ def displayQ1Result():
     for row in rows:
         print(row)
         tree1.insert("", tk.END, values=row)
-    tree1.pack()
+    tree1.pack(padx=10, pady=10)
 
     r1Connect.commit()
     r1Connect.close()
@@ -154,9 +155,11 @@ queryOneOutputFrame = tk.Frame(tab1, background=_skyblue)
 queryOneOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 # T = Text(root, bg, fg, bd, height, width, font, ..)
-Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=defaultFont, background=_navyblue, fg=_white).grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=defaultFont, background=_navyblue, fg=_white)
+Q1DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q1OutputLabel = tk.Label(queryOneOutputFrame, text="Output", font=defaultFont).pack(side=tk.TOP)
+Q1OutputLabel = tk.Label(queryOneOutputFrame, text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+Q1OutputLabel.pack(side="top", pady=10)
 
 bookIDEntry = tk.Entry(bookInputFrame1, font=defaultFont)
 bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID", font=defaultFont, background=_navyblue, fg=_white)
@@ -196,29 +199,34 @@ def Q2Submit():
     if resultLabel.winfo_exists:
         resultLabel.pack_forget()
 
+    validNumberSet = set("0123456789")
+    inputSet = set(str(borrowerPhoneNumberEntry.get()))
+
     Q2Connection = sqlite3.connect("LMS.db")
     Q2Cursor = Q2Connection.cursor()
 
     if not str(borrowerNameEntry.get()):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name", font=defaultFont)
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name", font=defaultFont, bg=_skyblue, fg=_black)
         errorLabel.pack(side="top")
     
-    elif(len(str(borrowerPhoneNumberEntry.get())) != 10):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number", font=defaultFont)
+    elif((len(str(borrowerPhoneNumberEntry.get())) != 10) or (not inputSet.issubset(validNumberSet))):
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number", font=defaultFont, bg=_skyblue, fg=_black)
         errorLabel.pack(side="top")
 
     elif not str(borrowerAddressEntry.get()):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter an Address", font=defaultFont)
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter an Address", font=defaultFont, bg=_skyblue, fg=_black)
         errorLabel.pack(side="top")
 
     else:
+        tempOldPhoneString = str(borrowerPhoneNumberEntry.get())
+        tempPhoneString = tempOldPhoneString[:3]+"-"+tempOldPhoneString[3:6]+"-"+tempOldPhoneString[6:]
         Q2Cursor.execute("INSERT INTO Borrower VALUES (?,?,?,?)",
-                        (None,borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
+                        (None,borrowerNameEntry.get(),borrowerAddressEntry.get(),tempPhoneString,))
         Q2Cursor.execute("SELECT Card_no FROM Borrower WHERE name = ? AND address = ? AND phone_number = ?",
-                        (borrowerNameEntry.get(),borrowerAddressEntry.get(),borrowerPhoneNumberEntry.get(),))
+                        (borrowerNameEntry.get(),borrowerAddressEntry.get(),tempPhoneString,))
 
         Q2results = Q2Cursor.fetchall()
-        resultLabel = tk.Label(queryTwoOutputFrame, text="New Card: "+str(Q2results[0][0]))
+        resultLabel = tk.Label(queryTwoOutputFrame, text="New Card: "+str(Q2results[0][0]), font=defaultFont, bg=_skyblue, fg=_black)
         resultLabel.pack(side="top")
 
     Q2Connection.commit()
@@ -242,6 +250,7 @@ def displayQ2Results():
     tree2.heading("1", text= "Card_no")
     tree2.heading("2", text="Name")
     tree2.heading("3", text="Address")
+    tree2.heading("4", text="Phone")
 
     print(len(tree2.get_children()))
 
@@ -255,7 +264,7 @@ def displayQ2Results():
     for row in rows:
         print(row)
         tree2.insert("", tk.END, values=row)
-    tree2.pack()
+    tree2.pack(padx=10, pady=10)
 
     r1Connect.commit()
     r1Connect.close()
@@ -269,8 +278,8 @@ queryTwoOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 Q2DescriptionLabel = tk.Label(borrowerInputFrame, text="Create Library Account", font=defaultFont, bg=_navyblue, fg=_white)
 Q2DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q2OutputLabel = tk.Label(queryTwoOutputFrame, text="Output", font=defaultFont)
-Q2OutputLabel.pack(side="top")
+Q2OutputLabel = tk.Label(queryTwoOutputFrame, text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+Q2OutputLabel.pack(side="top", pady=10)
 
 borrowerNameEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
 borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name", font=defaultFont, bg=_navyblue, fg=_white)
@@ -296,61 +305,137 @@ Q2ViewButton.grid(row=7, column=1, pady=10)
 
 #-- Query 3 --
 def Q3Submit():
+    global errorLabel
+    global tree3
+    global resultLabel
+
+    if tree3.winfo_exists:
+        tree3.pack_forget()
+
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget()
+
+    if resultLabel.winfo_exists:
+        resultLabel.pack_forget()
+
     Q3Connection = sqlite3.connect("LMS.db")
     Q3Cursor = Q3Connection.cursor()
 
-    Q3Cursor.execute("SELECT Book_id FROM Book WHERE Title = ? AND Book_publisher = ?",(Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
-    alreadyExists = Q3Cursor.fetchall()
-    if(alreadyExists):
-        Q3error1 = tk.Label(bookInputFrame2, text="Already in System").grid(row=1, column=2, columnspan=2)
+    if(Q3bookTitleEntry.get() and bookPublisherEntry.get() and bookAuthorEntry.get()):
+        Q3Cursor.execute("SELECT B.Book_id FROM Book B, Book_authors BA WHERE B.Title = ? AND B.Book_publisher = ? AND BA.Author_name = ? AND B.Book_id = BA.Book_id",(Q3bookTitleEntry.get(),bookPublisherEntry.get(),bookAuthorEntry.get(),))
+        alreadyExists1 = Q3Cursor.fetchall()
+        # Q3Cursor.execute("SELECT Book_id FROM Book_authors WHERE Author_name = ?",(bookAuthorEntry.get(),))
+        # alreadyExists2 = Q3Cursor.fetchall()
+
+        if(alreadyExists1 ):
+            errorLabel = tk.Label(queryThreeOutputFrame, text="Already in System", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel.pack(side="top")
+        else:
+            Q3Cursor.execute("INSERT INTO Book VALUES (?,?,?)",(None,Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
+            Q3Cursor.execute("SELECT Book_id FROM Book WHERE Title = ? AND Book_publisher = ?",(Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
+            tempBookIDs = Q3Cursor.fetchall()
+
+            Q3Cursor.execute("INSERT INTO Book_authors VALUES (?,?)",(tempBookIDs[-1][0],bookAuthorEntry.get(),))
+            Q3Cursor.execute("SELECT Branch_id FROM Library_branch")
+            branchList = Q3Cursor.fetchall()
+            for branch in branchList:
+                Q3Cursor.execute("INSERT INTO Book_copies VALUES (?,?,?)",(tempBookIDs[-1][0],branch[0],5,))
+            resultLabel = tk.Label(queryThreeOutputFrame, text="Successfully Added!\nNew Book ID: {}".format(tempBookIDs[-1][0]), font=defaultFont, bg=_skyblue, fg=_black)
+            resultLabel.pack(side="top")
     else:
-        Q3Cursor.execute("INSERT INTO Book VALUES (?,?,?)",(None,Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
-        Q3Cursor.execute("SELECT Book_id FROM Book WHERE Title = ? AND Book_publisher = ?",(Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
-        tempBookID = Q3Cursor.fetchall()
-        Q3Cursor.execute("INSERT INTO Book_authors VALUES (?,?)",(tempBookID[0][0],bookAuthorEntry.get(),))
-        Q3Cursor.execute("SELECT Branch_id FROM Library_branch")
-        branchList = Q3Cursor.fetchall()
-        for branch in branchList:
-            Q3Cursor.execute("INSERT INTO Book_copies VALUES (?,?,?)",(tempBookID[0][0],branch[0],5,))
-        Q3OutputLabel = tk.Label(bookInputFrame2, text="Successfully Added!").grid(row=1, column=2, columnspan=2)
+        errorLabel = tk.Label(queryThreeOutputFrame, text="Fill in all entry boxes", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel.pack(side="top")
 
     Q3Connection.commit()
     Q3Connection.close()
 
-bookInputFrame2 = tk.Frame(tab3, background="white")
-bookInputFrame2.grid(row=0, column=0, padx=20, pady=20)
+def displayQ3Results():
+    global tree3
+    global errorLabel
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=defaultFont)
+
+    if tree3.winfo_exists:
+        for item in tree3.get_children():
+            tree3.delete(item)
+        tree3.pack_forget()
+    
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget() 
+
+    tree3.heading("1", text= "Book_id")
+    tree3.heading("2", text="Branch_id")
+    tree3.heading("3", text="No_copies")
+
+    print(len(tree3.get_children()))
+
+    r1Connect = sqlite3.connect("LMS.db")
+    r1cursor = r1Connect.cursor()
+
+    r1cursor.execute("SELECT * FROM Book_copies")
+
+    rows = r1cursor.fetchall()
+
+    for row in rows:
+        print(row)
+        tree3.insert("", tk.END, values=row)
+    tree3.pack(padx=10, pady=10)
+
+    r1Connect.commit()
+    r1Connect.close()
+
+bookInputFrame2 = tk.Frame(tab3, background=_navyblue)
+bookInputFrame2.pack(side=tk.LEFT, fill="both", expand=False)
+
+queryThreeOutputFrame = tk.Frame(tab3, background=_skyblue)
+queryThreeOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q3DescriptionLabel = tk.Label(bookInputFrame2,
-                              text="Add Book to System").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+                              text="Add Book to System", font=defaultFont, bg=_navyblue, fg=_white)
+Q3DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q3OutputLabel = tk.Label(bookInputFrame2,
-                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
+Q3OutputLabel = tk.Label(queryThreeOutputFrame,
+                              text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+Q3OutputLabel.pack(side="top", pady=10)
 
-Q3bookTitleEntry = tk.Entry(bookInputFrame2)
-Q3bookTitleEntryLabel = tk.Label(bookInputFrame2, text="Book Title")
+Q3bookTitleEntry = tk.Entry(bookInputFrame2, font=defaultFont)
+Q3bookTitleEntryLabel = tk.Label(bookInputFrame2, text="Book Title", font=defaultFont, bg=_navyblue, fg=_white)
 Q3bookTitleEntryLabel.grid(row=1, column=0, columnspan=2, sticky='sw')
-Q3bookTitleEntry.grid(row=2, column=0, columnspan=2)
+Q3bookTitleEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
-# Q3bookIDEntry = tk.Entry(bookInputFrame2)
-# Q3bookIDEntryLabel = tk.Label(bookInputFrame2, text="Book ID")
-# Q3bookIDEntryLabel.grid(row=1, column=2, columnspan=2, sticky="sw")
-# Q3bookIDEntry.grid(row=2, column=2, columnspan=2)
-
-bookPublisherEntry = tk.Entry(bookInputFrame2)
-bookPublisherEntryLabel = tk.Label(bookInputFrame2, text="Book Publisher")
+bookPublisherEntry = tk.Entry(bookInputFrame2, font=defaultFont)
+bookPublisherEntryLabel = tk.Label(bookInputFrame2, text="Book Publisher", font=defaultFont, bg=_navyblue, fg=_white)
 bookPublisherEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
-bookPublisherEntry.grid(row=4, column=0, columnspan=2)
+bookPublisherEntry.grid(row=4, column=0, columnspan=2, padx=10)
 
-bookAuthorEntry = tk.Entry(bookInputFrame2)
-bookAuthorEntryLabel = tk.Label(bookInputFrame2, text="Book Author")
+bookAuthorEntry = tk.Entry(bookInputFrame2, font=defaultFont)
+bookAuthorEntryLabel = tk.Label(bookInputFrame2, text="Book Author", font=defaultFont, bg=_navyblue, fg=_white)
 bookAuthorEntryLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
-bookAuthorEntry.grid(row=6, column=0, columnspan=2)
+bookAuthorEntry.grid(row=6, column=0, columnspan=2, padx=10)
 
-Q3SubmitButton = tk.Button(bookInputFrame2, text = 'Submit',
-                           command = Q3Submit).grid(row=7, column=0,columnspan=2, pady=10)
+Q3SubmitButton = tk.Button(bookInputFrame2, text = 'Submit', font=defaultFont,
+                           command = Q3Submit).grid(row=7, column=0, pady=10)
+
+Q3ViewButton = tk.Button(bookInputFrame2, text = 'View', font=defaultFont, command = displayQ3Results)
+Q3ViewButton.grid(row=7, column=1, pady=10)
 
 # -- Query 4 --
 def Q4Submit():
+    global tree4
+    global errorLabel
+
+    if tree4.winfo_exists:
+        for item in tree4.get_children():
+            tree4.delete(item)
+        tree4.pack_forget()
+    
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget()
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=defaultFont)
+
     Q4Connection = sqlite3.connect("LMS.db")
     Q4Cursor = Q4Connection.cursor()
 
@@ -360,44 +445,82 @@ def Q4Submit():
         Q4Cursor.execute("SELECT Branch_id, No_of_copies FROM Book_copies WHERE Book_id = ? GROUP BY Branch_id",(str(tempBookID[0][0])),)
         Q4results = Q4Cursor.fetchall()
         if(Q4results):
-            Q4PrintResults = "Branch# : Amount\n"
             for result in Q4results:
-                Q4PrintResults += str(result[0])+" : "+str(result[1])+"\n"
-            Q4resultsLabel = tk.Label(bookCopiesPerBranchInputFrame, text=Q4PrintResults).grid(row=1, column=2, columnspan=2)
+                print(result)
+                tree4.insert("", tk.END, values=result)
+            tree4.pack(padx=10, pady=10)
+            
+            tree4.heading("1", text="Branch_#")
+            tree4.heading("2", text="Amount")
+
+            print(len(tree4.get_children()))
         else:
-            Q4error2 = tk.Label(bookCopiesPerBranchInputFrame, text="Book No Longer Held").grid(row=1, column=2, columnspan=2)
+            errorLabel = tk.Label(queryFourOutputFrame, text="Book No Longer Held", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel.pack(side="top")
     else:
-        Q4error1 = tk.Label(bookCopiesPerBranchInputFrame, text="Invalid Book Title").grid(row=1, column=2, columnspan=2)
+        errorLabel = tk.Label(queryFourOutputFrame, text="Invalid Book Title", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel.pack(side="top")
 
     Q4Connection.commit()
     Q4Connection.close()
 
-bookCopiesPerBranchInputFrame = tk.Frame(tab4, background="white")
-bookCopiesPerBranchInputFrame.grid(row=0, column=0, padx=20, pady=20)
+bookCopiesPerBranchInputFrame = tk.Frame(tab4, background=_navyblue)
+bookCopiesPerBranchInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
+
+queryFourOutputFrame = tk.Frame(tab4, background=_skyblue)
+queryFourOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q4DescriptionLabel = tk.Label(bookCopiesPerBranchInputFrame,
-                              text="Search for a Book").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+                              text="Search for a Book", font=defaultFont, bg=_navyblue, fg=_white)
+Q4DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q4OutputLabel = tk.Label(bookCopiesPerBranchInputFrame,
-                              text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
+Q4OutputLabel = tk.Label(queryFourOutputFrame,
+                              text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+Q4OutputLabel.pack(side="top", pady=10)
 
-Q4bookTitleEntry = tk.Entry(bookCopiesPerBranchInputFrame)
-Q4bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInputFrame, text="Book Title")
+Q4bookTitleEntry = tk.Entry(bookCopiesPerBranchInputFrame, font=defaultFont)
+Q4bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInputFrame, text="Book Title", font=defaultFont, bg=_navyblue, fg=_white)
 Q4bookTitleEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
-Q4bookTitleEntry.grid(row=2, column=0, columnspan=2)
+Q4bookTitleEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
-Q4SubmitButton = tk.Button(bookCopiesPerBranchInputFrame, text = 'Submit',
-                           command = Q4Submit).grid(row=7, column=0,columnspan=2, pady=10)
+Q4SubmitButton = tk.Button(bookCopiesPerBranchInputFrame, text = 'Submit', font=defaultFont,
+                           command = Q4Submit).grid(row=3, column=0, columnspan=2, pady=10)
 
 # -- Query 5 --
 def Q5Submit():
+    global errorLabel
+    global tree5
+    global resultLabel
+
+    if tree5.winfo_exists:
+        for item in tree5.get_children():
+            tree5.delete(item)
+        tree5.pack_forget()
+
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget()
+
+    if resultLabel.winfo_exists:
+        resultLabel.pack_forget()
+
     Q5Connection = sqlite3.connect("LMS.db")
     Q5Cursor = Q5Connection.cursor()
-    start_date_str = cal1.get_date().strftime('%m/%d/%Y')
-    start_date = datetime.strptime(start_date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
-    end_date_str = cal2.get_date().strftime('%m/%d/%Y')
-    end_date = datetime.strptime(end_date_str, '%m/%d/%Y').strftime('%Y-%m-%d')
-    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Date_out BETWEEN ? AND ?", (start_date, end_date,))
+
+    start_date_str = cal1.get_date()
+    start_date = datetime.strftime(start_date_str, '%Y-%m-%d')
+    end_date_str = cal2.get_date()
+    end_date = datetime.strftime(end_date_str, '%Y-%m-%d')
+
+    Q5Cursor.execute("CREATE VIEW BookLoanInfo AS SELECT BR.name as BName, BL.Card_no as Card_No, BK.Book_id as Book_id, "
+                     "BK.Title as Title, BL.Branch_id, BL.Date_out as Date_Out, BL.Due_date as Due_Date, BL.Returned_date, "
+                     "CASE WHEN BL.Returned_date <= BL.Due_date THEN 0 "
+                     "ELSE JulianDay(BL.Returned_date) - JulianDay(BL.Due_date) END AS 'DaysLate',"
+                     "CASE WHEN BL.Returned_date <= BL.Due_date THEN 0 "
+                     "ELSE (JulianDay(BL.Returned_date) - JulianDay(BL.Due_date)) * 10 END AS LateFeeBalance"
+                     "FROM Book_Loans BL JOIN Borrower BR ON BL.Card_no = BR.Card_no JOIN Book BK ON BL.Book_id = BK.Book_id;")
+    Q5Cursor.execute("SELECT * FROM BookLoanInfo")
+
+    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Due_date BETWEEN ? AND ?", (start_date, end_date,))
     Q5Range = Q5Cursor.fetchall()
 
     if Q5Range:
@@ -407,39 +530,101 @@ def Q5Submit():
                          (start_date, end_date,))
         Q5Results = Q5Cursor.fetchall()
         if Q5Results:
-            Q5PrintResults = "BookID : Late\n"
+            # Q5PrintResults = "BookID : Late\n"
             for result in Q5Results:
-                Q5PrintResults += str(result[0]) + " : " + str(result[1]) + "\n"
-            Q5resultsLabel = tk.Label(dueDatesInputFrame, text=Q5PrintResults).grid(row=1, column=2, columnspan=2)
+                print(result)
+                tree5.insert("", tk.END, values=result)
+                # Q5PrintResults += str(result[0]) + " : " + str(result[1]) + "\n"
+            tree5.pack(padx=10, pady=10)
+
+            tree5.heading("1", text= "Borrower ID")
+            tree5.heading("2", text="Borrower Name")
+            tree5.heading("2", text="Book ID")
+            tree5.heading("2", text="Book Title")
+            tree5.heading("2", text="Borrower Name")
+            tree5.heading("2", text="Borrower Name")
+            tree5.heading("2", text="Borrower Name")
+            tree5.heading("2", text="Borrower Name")
+
+            print(len(tree5.get_children()))
+            # resultLabel = tk.Label(queryFiveOutputFrame, text=Q5PrintResults)
+            # resultLabel.pack(side="top")
         else:
-            Q5error1 = tk.Label(dueDatesInputFrame, text="No late returns found").grid(row=1, column=2, columnspan=2)
+            errorLabel = tk.Label(queryFiveOutputFrame, text="No late returns found", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel.pack(side="top")
     else:
-        Q5error2 = tk.Label(dueDatesInputFrame, text="Invalid Date Range").grid(row=1, column=2, columnspan=2)
+        errorLabel = tk.Label(queryFiveOutputFrame, text="Invalid Date Range", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel.pack(side="top")
+
     Q5Connection.commit()
     Q5Connection.close()
 
+def displayQ5Results():
+    global tree5
+    global errorLabel
 
-dueDatesInputFrame = tk.Frame(tab5, background="white")
-dueDatesInputFrame.grid(row=0, column=0, padx=20, pady=20)
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=defaultFont)
+
+    if tree5.winfo_exists:
+        for item in tree5.get_children():
+            tree5.delete(item)
+        tree5.pack_forget()
+    
+    if errorLabel.winfo_exists:
+        errorLabel.pack_forget() 
+
+    tree5.heading("1", text= "Book_id")
+    tree5.heading("2", text="Days Late")
+
+    print(len(tree5.get_children()))
+
+    r1Connect = sqlite3.connect("LMS.db")
+    r1cursor = r1Connect.cursor()
+
+    r1cursor.execute("SELECT * FROM Book_copies")
+
+    rows = r1cursor.fetchall()
+
+    for row in rows:
+        print(row)
+        tree5.insert("", tk.END, values=row)
+    tree5.pack(padx=10, pady=10)
+
+    r1Connect.commit()
+    r1Connect.close()
+
+dueDatesInputFrame = tk.Frame(tab5, background=_navyblue)
+dueDatesInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
+
+queryFiveOutputFrame = tk.Frame(tab5, background=_skyblue)
+queryFiveOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q5DescriptionLabel = tk.Label(dueDatesInputFrame,
-                              text="Search for Late Returns").grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+                              text="Due Dates Within Range", font=defaultFont, bg=_navyblue, fg=_white)
+Q5DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q5OutputLabel = tk.Label(dueDatesInputFrame,
-                          text="Output").grid(row=0, column=2, columnspan=2, padx=5, pady=10)
+Q5OutputLabel = tk.Label(queryFiveOutputFrame,
+                          text="Late Returns", font=defaultFont, bg=_skyblue, fg=_black)
+Q5OutputLabel.pack(side="top", pady=10)
 
-tk.Label(dueDatesInputFrame, text="Choose a Start Date").grid(row=1, column=0, columnspan=2, sticky="sw")
-cal1 = DateEntry(dueDatesInputFrame, width=16, background="magenta3", foreground="white", bd=2)
-cal1.grid(row=2, column=0, columnspan=2, sticky="sw")
+tk.Label(dueDatesInputFrame, text="Choose a Start Date", font=defaultFont, bg=_navyblue, fg=_white).grid(row=1, column=0, columnspan=2, sticky="sw")
+cal1 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_black, foreground="white", bd=2)
+cal1.grid(row=2, column=0, columnspan=2, sticky="sw", padx=10)
 Q5Start_Date = cal1
 
-tk.Label(dueDatesInputFrame, text="Choose an End Date").grid(row=3, column=0, columnspan=2, sticky="sw")
-cal2 = DateEntry(dueDatesInputFrame, width=16, background="magenta3", foreground="white", bd=2)
-cal2.grid(row=4, column=0, columnspan=2, sticky="sw")
+tk.Label(dueDatesInputFrame, text="Choose an End Date", font=defaultFont, bg=_navyblue, fg=_white).grid(row=3, column=0, columnspan=2, sticky="sw")
+cal2 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_black, foreground="white", bd=2)
+cal2.grid(row=4, column=0, columnspan=2, sticky="sw", padx=10)
 Q5End_Date = cal2
 
-Q5SubmitButton = tk.Button(dueDatesInputFrame, text='Submit',
+
+
+Q5SubmitButton = tk.Button(dueDatesInputFrame, text='Submit', font=defaultFont,
                            command=Q5Submit).grid(row=5, column=0, columnspan=2, pady=10)
+
+# Q5ViewButton = tk.Button(dueDatesInputFrame, text = 'View', font=defaultFont, command = displayQ5Results)
+# Q5ViewButton.grid(row=5, column=1, pady=10)
 
 # global variables
 
@@ -447,11 +632,11 @@ errorLabel = tk.Label()
 resultLabel = tk.Label()
 resultFrame: tk.Frame()
 
-tree1 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
-tree2 = ttk.Treeview(queryTwoOutputFrame, columns=("1", "2","3"), show='headings')
-tree3 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
-tree4 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
-tree5 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings')
+tree1 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings', height=20)
+tree2 = ttk.Treeview(queryTwoOutputFrame, columns=("1", "2","3","4"), show='headings', height=20)
+tree3 = ttk.Treeview(queryThreeOutputFrame, columns=("1", "2","3"), show='headings', height=20)
+tree4 = ttk.Treeview(queryFourOutputFrame, columns=("1", "2"), show='headings', height=10)
+tree5 = ttk.Treeview(queryFiveOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings', height=20)
 
 # creates the mainloop of the GUI
 LMS_GUI_WINDOW.mainloop()
