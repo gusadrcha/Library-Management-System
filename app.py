@@ -131,6 +131,11 @@ def displayQ1Result():
     tree1.heading("5", text="Due_date")
     tree1.heading("6", text="Returned_date")
 
+    tree1.configure(height=30)
+
+    style = ttk.Style()
+    style.configure("Treeview.Heading", font=defaultFont)
+
     print(len(tree1.get_children()))
 
     r1Connect = sqlite3.connect("LMS.db")
@@ -154,7 +159,6 @@ bookInputFrame1.pack(side=tk.LEFT, fill="both", expand=False)
 queryOneOutputFrame = tk.Frame(tab1, background=_skyblue)
 queryOneOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
-# T = Text(root, bg, fg, bd, height, width, font, ..)
 Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=defaultFont, background=_navyblue, fg=_white)
 Q1DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
@@ -251,6 +255,8 @@ def displayQ2Results():
     tree2.heading("2", text="Name")
     tree2.heading("3", text="Address")
     tree2.heading("4", text="Phone")
+
+    tree1.configure(height=30)
 
     print(len(tree2.get_children()))
 
