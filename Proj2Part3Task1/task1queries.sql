@@ -22,7 +22,7 @@ WHERE EXISTS (
 );
 
 -- View --
-CREATE VIEW BookLoanInfo AS
+CREATE VIEW vBookLoanInfo AS
 SELECT BL.Card_no AS Card_No,
        BR.name as "Borrower Name",
        BL.Date_out as Date_Out,
