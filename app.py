@@ -61,7 +61,6 @@ def Q1Submit():
         tree1.pack_forget()
 
     if errorLabel.winfo_exists:
-        print("LABEL EXISTS REMOVING NOW")
         errorLabel.pack_forget()
     
     if resultLabel.winfo_exists:
@@ -192,7 +191,6 @@ def Q2Submit():
         tree2.pack_forget()
 
     if errorLabel.winfo_exists:
-        print("LABEL EXISTS REMOVING NOW")
         errorLabel.pack_forget()
     
     if resultLabel.winfo_exists:
