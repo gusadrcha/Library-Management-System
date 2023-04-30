@@ -555,8 +555,8 @@ def Q5Submit():
     end_date_str = cal2.get_date()
     end_date = datetime.strftime(end_date_str, '%Y-%m-%d')
 
-    Q5Cursor.execute("CREATE VIEW IF NOT EXISTS BookLoanInfo AS SELECT BR.name as BName, BL.Card_no as Card_No, BK.Book_id as Book_id, "
-                     "BK.Title as Title, BL.Branch_id, BL.Date_out as Date_Out, BL.Due_date as Due_Date, BL.Returned_date, "
+    Q5Cursor.execute("CREATE VIEW IF NOT EXISTS BookLoanInfo AS SELECT BR.name AS BName, BL.Card_no AS Card_No, BK.Book_id AS Book_id, "
+                     "BK.Title AS Title, BL.Branch_id, BL.Date_out AS Date_Out, BL.Due_date AS Due_Date, BL.Returned_date, "
                      "CASE WHEN BL.Returned_date <= BL.Due_date THEN 0 "
                      "ELSE JulianDay(BL.Returned_date) - JulianDay(BL.Due_date) END AS 'DaysLate',"
                      "CASE WHEN BL.Returned_date <= BL.Due_date THEN 0 "
@@ -564,20 +564,20 @@ def Q5Submit():
                      "FROM Book_Loans BL JOIN Borrower BR ON BL.Card_no = BR.Card_no JOIN Book BK ON BL.Book_id = BK.Book_id;")
     Q5Cursor.execute("SELECT * FROM BookLoanInfo")
 
-    Q5Cursor.execute("SELECT Book_id FROM Book_Loans WHERE Due_date BETWEEN ? AND ?", (start_date, end_date,))
+    Q5Cursor.execute("SELECT * FROM BookLoanInfo WHERE Due_date BETWEEN ? AND ?", (start_date, end_date,))
     Q5Range = Q5Cursor.fetchall()
 
     if Q5Range:
-        Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) AS days_late "
-                         "FROM Book_loans "
-                         "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",
-                         (start_date, end_date,))
-        Q5Results = Q5Cursor.fetchall()
-        if Q5Results:
+        # Q5Cursor.execute("SELECT Book_id, (julianday(Returned_date) - julianday(Due_date)) AS days_late "
+        #                  "FROM Book_loans "
+        #                  "WHERE Returned_date > Due_date AND Due_date BETWEEN ? AND ?",
+        #                  (start_date, end_date,))
+        # Q5Results = Q5Cursor.fetchall()
+        if Q5Range:
             # Q5PrintResults = "BookID : Late\n"
-            for result in Q5Results:
-                print(result)
-                tree5.insert("", tk.END, values=result)
+            for record in Q5Range:
+                print(record)
+                tree5.insert("", tk.END, values=record)
                 # Q5PrintResults += str(result[0]) + " : " + str(result[1]) + "\n"
             tree5.pack(padx=10, pady=10)
 
