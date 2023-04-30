@@ -555,12 +555,12 @@ def Q5Submit():
     end_date_str = cal2.get_date()
     end_date = datetime.strftime(end_date_str, '%Y-%m-%d')
 
-    Q5Cursor.execute("CREATE VIEW BookLoanInfo AS SELECT BR.name as BName, BL.Card_no as Card_No, BK.Book_id as Book_id, "
+    Q5Cursor.execute("CREATE VIEW IF NOT EXISTS BookLoanInfo AS SELECT BR.name as BName, BL.Card_no as Card_No, BK.Book_id as Book_id, "
                      "BK.Title as Title, BL.Branch_id, BL.Date_out as Date_Out, BL.Due_date as Due_Date, BL.Returned_date, "
                      "CASE WHEN BL.Returned_date <= BL.Due_date THEN 0 "
                      "ELSE JulianDay(BL.Returned_date) - JulianDay(BL.Due_date) END AS 'DaysLate',"
                      "CASE WHEN BL.Returned_date <= BL.Due_date THEN 0 "
-                     "ELSE (JulianDay(BL.Returned_date) - JulianDay(BL.Due_date)) * 10 END AS LateFeeBalance"
+                     "ELSE (JulianDay(BL.Returned_date) - JulianDay(BL.Due_date)) * 10 END AS LateFeeBalance "
                      "FROM Book_Loans BL JOIN Borrower BR ON BL.Card_no = BR.Card_no JOIN Book BK ON BL.Book_id = BK.Book_id;")
     Q5Cursor.execute("SELECT * FROM BookLoanInfo")
 
@@ -581,14 +581,16 @@ def Q5Submit():
                 # Q5PrintResults += str(result[0]) + " : " + str(result[1]) + "\n"
             tree5.pack(padx=10, pady=10)
 
-            tree5.heading("1", text= "Borrower ID")
-            tree5.heading("2", text="Borrower Name")
-            tree5.heading("2", text="Book ID")
-            tree5.heading("2", text="Book Title")
-            tree5.heading("2", text="Borrower Name")
-            tree5.heading("2", text="Borrower Name")
-            tree5.heading("2", text="Borrower Name")
-            tree5.heading("2", text="Borrower Name")
+            tree5.heading("1", text= "Borrower Name")
+            tree5.heading("2", text="Borrower ID")
+            tree5.heading("3", text="Book ID")
+            tree5.heading("4", text="Book Title")
+            tree5.heading("5", text="Branch ID")
+            tree5.heading("6", text="Date Out")
+            tree5.heading("7", text="Due Date")
+            tree5.heading("8", text="Returned Date")
+            tree5.heading("9", text="Days Late")
+            tree5.heading("10", text="Late Fee Balance")
 
             print(len(tree5.get_children()))
             # resultLabel = tk.Label(queryFiveOutputFrame, text=Q5PrintResults)
@@ -645,7 +647,7 @@ queryFiveOutputFrame = tk.Frame(tab5, background=_uta_blue)
 queryFiveOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q5DescriptionLabel = tk.Label(dueDatesInputFrame,
-                              text="Due Dates Within Range", font=defaultFont, bg=_uta_orange, fg=_white)
+                              text="Select Due Date Range", font=defaultFont, bg=_uta_orange, fg=_white)
 Q5DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
 Q5OutputLabel = tk.Label(queryFiveOutputFrame,
@@ -653,12 +655,12 @@ Q5OutputLabel = tk.Label(queryFiveOutputFrame,
 Q5OutputLabel.pack(side="top", pady=10)
 
 tk.Label(dueDatesInputFrame, text="Choose a Start Date", font=defaultFont, bg=_uta_orange, fg=_white).grid(row=1, column=0, columnspan=2, sticky="sw")
-cal1 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_white, foreground="white", bd=2)
+cal1 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_white, foreground="black", bd=2)
 cal1.grid(row=2, column=0, columnspan=2, sticky="sw", padx=10)
 Q5Start_Date = cal1
 
 tk.Label(dueDatesInputFrame, text="Choose an End Date", font=defaultFont, bg=_uta_orange, fg=_white).grid(row=3, column=0, columnspan=2, sticky="sw")
-cal2 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_white, foreground="white", bd=2)
+cal2 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_white, foreground="black", bd=2)
 cal2.grid(row=4, column=0, columnspan=2, sticky="sw", padx=10)
 Q5End_Date = cal2
 
@@ -676,11 +678,11 @@ errorLabel = tk.Label()
 resultLabel = tk.Label()
 resultFrame: tk.Frame()
 
-tree1 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings', height=20)
-tree2 = ttk.Treeview(queryTwoOutputFrame, columns=("1", "2","3","4"), show='headings', height=20)
-tree3 = ttk.Treeview(queryThreeOutputFrame, columns=("1", "2","3"), show='headings', height=20)
+tree1 = ttk.Treeview(queryOneOutputFrame, columns=("1", "2", "3", "4", "5", "6"), show='headings', height=20)
+tree2 = ttk.Treeview(queryTwoOutputFrame, columns=("1", "2", "3", "4"), show='headings', height=20)
+tree3 = ttk.Treeview(queryThreeOutputFrame, columns=("1", "2", "3"), show='headings', height=20)
 tree4 = ttk.Treeview(queryFourOutputFrame, columns=("1", "2"), show='headings', height=10)
-tree5 = ttk.Treeview(queryFiveOutputFrame, columns=("1", "2","3", "4", "5", "6"), show='headings', height=20)
+tree5 = ttk.Treeview(queryFiveOutputFrame, columns=("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"), show='headings', height=20)
 
 # creates the mainloop of the GUI
 LMS_GUI_WINDOW.mainloop()
