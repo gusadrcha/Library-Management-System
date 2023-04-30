@@ -6,15 +6,17 @@ from datetime import date, timedelta, datetime
 import sqlite3
 
 _white = "#ffffff"
-_black = "#00171f"
-_navyblue = "#003459"
+# _white = "#00171f"
+_uta_orange = "#003459"
 _blue = "#007ea7"
-_skyblue = "#00a8e8"
+_uta_blue = "#00a8e8"
+_uta_orange = "#F58025"
+_uta_blue = "#0064B1"
 
 # creates a window
 LMS_GUI_WINDOW = tk.Tk()
 
-LMS_GUI_WINDOW.config(bg=_black)
+LMS_GUI_WINDOW.config(bg=_white)
 
 # default size of window when first created
 height = LMS_GUI_WINDOW.winfo_screenheight()
@@ -30,8 +32,8 @@ LMS_GUI_WINDOW.iconbitmap("book-icon-file-13.jpg")
 # set the title of the GUI
 LMS_GUI_WINDOW.title("Library Management System")
 
-defaultFont = Font(family='Times',
-                   size=16)
+defaultFont = Font(family='Times', size=16)
+frameTitle = Font(family="Times", size=20, underline=1)
 
 # create the main tab window and view
 tabControl = ttk.Notebook(LMS_GUI_WINDOW)
@@ -90,22 +92,22 @@ def Q1Submit():
                         Q1Cursor.execute("SELECT No_of_copies FROM Book_copies WHERE Book_id = ? AND Branch_id = ?",
                                         (tempBook[0][0],tempBranch[0][0],))
                         Q1results = Q1Cursor.fetchall()
-                        resultLabel = tk.Label(queryOneOutputFrame, text=str(Q1results[0][0])+" copies left", font=defaultFont, bg=_skyblue, fg=_black)
+                        resultLabel = tk.Label(queryOneOutputFrame, text=str(Q1results[0][0])+" copies left", font=defaultFont, bg=_uta_blue, fg=_white)
                         resultLabel.pack(side="top")
                     else:
-                        errorLabel = tk.Label(queryOneOutputFrame, text="0 Copies at Specified Branch", font=defaultFont, bg=_skyblue, fg=_black)
+                        errorLabel = tk.Label(queryOneOutputFrame, text="0 Copies at Specified Branch", font=defaultFont, bg=_uta_blue, fg=_white)
                         errorLabel.pack(fill="both")
                 else:
-                    errorLabel = tk.Label(queryOneOutputFrame, text="Specified Branch does not have Requested Book", font=defaultFont, bg=_skyblue, fg=_black)
+                    errorLabel = tk.Label(queryOneOutputFrame, text="Specified Branch does not have Requested Book", font=defaultFont, bg=_uta_blue, fg=_white)
                     errorLabel.pack(fill="both")
             else:
-                errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Card No.", font=defaultFont, bg=_skyblue, fg=_black)
+                errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Card No.", font=defaultFont, bg=_uta_blue, fg=_white)
                 errorLabel.pack(fill="both")
         else:
-            errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Branch ID", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Branch ID", font=defaultFont, bg=_uta_blue, fg=_white)
             errorLabel.pack(fill="both")
     else:
-        errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Book ID", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryOneOutputFrame, text="Invalid Book ID", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(fill="both")
 
 
@@ -135,6 +137,9 @@ def displayQ1Result():
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=defaultFont)
+    
+    tree1.tag_configure("odd", background='#E8E8E8')
+    tree1.tag_configure("even", background='#DFDFDF')
 
     print(len(tree1.get_children()))
 
@@ -145,38 +150,51 @@ def displayQ1Result():
 
     rows = r1cursor.fetchall()
 
+    x = 0
     for row in rows:
         print(row)
-        tree1.insert("", tk.END, values=row)
-    tree1.pack(padx=10, pady=10)
+        if x % 2 == 0:
+            tree1.insert("", tk.END, values=row, tags=("even"))
+        else:
+            tree1.insert("", tk.END, values=row, tags=("odd"))
+        x += 1
+
+    tree1.column("1", anchor=tk.CENTER)
+    tree1.column("2", anchor=tk.CENTER)
+    tree1.column("3", anchor=tk.CENTER)
+    tree1.column("4", anchor=tk.CENTER)
+    tree1.column("5", anchor=tk.CENTER)
+    tree1.column("6", anchor=tk.CENTER)
+    
+    tree1.pack(side=tk.TOP, padx=10, pady=10)
 
     r1Connect.commit()
     r1Connect.close()
 
-bookInputFrame1 = tk.Frame(tab1, background=_navyblue)
+bookInputFrame1 = tk.Frame(tab1, background=_uta_orange)
 bookInputFrame1.pack(side=tk.LEFT, fill="both", expand=False)
 
-queryOneOutputFrame = tk.Frame(tab1, background=_skyblue)
+queryOneOutputFrame = tk.Frame(tab1, background=_uta_blue)
 queryOneOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
-Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=defaultFont, background=_navyblue, fg=_white)
+Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=defaultFont, background=_uta_orange, fg=_white)
 Q1DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q1OutputLabel = tk.Label(queryOneOutputFrame, text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+Q1OutputLabel = tk.Label(queryOneOutputFrame, text="Output", font=frameTitle, bg=_uta_blue, fg=_white)
 Q1OutputLabel.pack(side="top", pady=10)
 
 bookIDEntry = tk.Entry(bookInputFrame1, font=defaultFont)
-bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID", font=defaultFont, background=_navyblue, fg=_white)
+bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID", font=defaultFont, background=_uta_orange, fg=_white)
 bookIDEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
 bookIDEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
 libraryBranchIDEntry = tk.Entry(bookInputFrame1, font=defaultFont)
-libraryBranchIDEntryLabel = tk.Label(bookInputFrame1, text="Branch ID", font=defaultFont, background=_navyblue, fg=_white)
+libraryBranchIDEntryLabel = tk.Label(bookInputFrame1, text="Branch ID", font=defaultFont, background=_uta_orange, fg=_white)
 libraryBranchIDEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
 libraryBranchIDEntry.grid(row=4, column=0, columnspan=2, padx=10)
 
 bookBorrowerEntry = tk.Entry(bookInputFrame1, font=defaultFont)
-bookBorrowerEntryLabel = tk.Label(bookInputFrame1, text="Card No.", font=defaultFont, background=_navyblue, fg=_white)
+bookBorrowerEntryLabel = tk.Label(bookInputFrame1, text="Card No.", font=defaultFont, background=_uta_orange, fg=_white)
 bookBorrowerEntryLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
 bookBorrowerEntry.grid(row=6, column=0, columnspan=2, padx=10)
 
@@ -210,15 +228,15 @@ def Q2Submit():
     Q2Cursor = Q2Connection.cursor()
 
     if not str(borrowerNameEntry.get()):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter a Name", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(side="top")
     
     elif((len(str(borrowerPhoneNumberEntry.get())) != 10) or (not inputSet.issubset(validNumberSet))):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Invalid Phone Number", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(side="top")
 
     elif not str(borrowerAddressEntry.get()):
-        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter an Address", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryTwoOutputFrame, text="Must enter an Address", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(side="top")
 
     else:
@@ -230,7 +248,7 @@ def Q2Submit():
                         (borrowerNameEntry.get(),borrowerAddressEntry.get(),tempPhoneString,))
 
         Q2results = Q2Cursor.fetchall()
-        resultLabel = tk.Label(queryTwoOutputFrame, text="New Card: "+str(Q2results[0][0]), font=defaultFont, bg=_skyblue, fg=_black)
+        resultLabel = tk.Label(queryTwoOutputFrame, text="New Card: "+str(Q2results[0][0]), font=defaultFont, bg=_uta_blue, fg=_white)
         resultLabel.pack(side="top")
 
     Q2Connection.commit()
@@ -251,14 +269,13 @@ def displayQ2Results():
     if errorLabel.winfo_exists:
         errorLabel.pack_forget() 
 
+    tree2.tag_configure("odd", background='#E8E8E8')
+    tree2.tag_configure("even", background='#DFDFDF')
+
     tree2.heading("1", text= "Card_no")
     tree2.heading("2", text="Name")
     tree2.heading("3", text="Address")
     tree2.heading("4", text="Phone")
-
-    tree1.configure(height=30)
-
-    print(len(tree2.get_children()))
 
     r1Connect = sqlite3.connect("LMS.db")
     r1cursor = r1Connect.cursor()
@@ -267,38 +284,49 @@ def displayQ2Results():
 
     rows = r1cursor.fetchall()
 
+    x = 0
     for row in rows:
         print(row)
-        tree2.insert("", tk.END, values=row)
+        if x % 2 ==0:
+            tree2.insert("", tk.END, values=row, tags=("even"))
+        else:
+            tree2.insert("", tk.END, values=row, tags=("odd"))
+        x += 1
+
+    tree2.column("1", anchor=tk.CENTER)
+    tree2.column("2", anchor=tk.CENTER)
+    tree2.column("3", anchor=tk.CENTER)
+    tree2.column("4", anchor=tk.CENTER)
+
     tree2.pack(padx=10, pady=10)
 
     r1Connect.commit()
     r1Connect.close()
 
-borrowerInputFrame = tk.Frame(tab2, background=_navyblue)
+borrowerInputFrame = tk.Frame(tab2, background=_uta_orange)
 borrowerInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
 
-queryTwoOutputFrame = tk.Frame(tab2, background=_skyblue)
+queryTwoOutputFrame = tk.Frame(tab2, background=_uta_blue)
 queryTwoOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
-Q2DescriptionLabel = tk.Label(borrowerInputFrame, text="Create Library Account", font=defaultFont, bg=_navyblue, fg=_white)
+Q2DescriptionLabel = tk.Label(borrowerInputFrame, text="Create Library Account", font=defaultFont, bg=_uta_orange, fg=_white)
 Q2DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
-Q2OutputLabel = tk.Label(queryTwoOutputFrame, text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+Q2OutputLabel = tk.Label(queryTwoOutputFrame, text="Output", font=defaultFont, bg=_uta_blue, fg=_white)
 Q2OutputLabel.pack(side="top", pady=10)
 
 borrowerNameEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
-borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name", font=defaultFont, bg=_navyblue, fg=_white)
+borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name", font=defaultFont, bg=_uta_orange, fg=_white)
 borrowerNameEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
 borrowerNameEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
 borrowerAddressEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
-borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address", font=defaultFont, bg=_navyblue, fg=_white)
+borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address", font=defaultFont, bg=_uta_orange, fg=_white)
 borrowerAddressEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
 borrowerAddressEntry.grid(row=4, column=0, columnspan=2, padx=10)
 
 borrowerPhoneNumberEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
-borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.", font=defaultFont, bg=_navyblue, fg=_white)
+borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.", font=defaultFont, bg=_uta_orange, fg=_white)
 borrowerPhoneNumberLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
 borrowerPhoneNumberEntry.grid(row=6, column=0, columnspan=2, padx=10)
 
@@ -334,7 +362,7 @@ def Q3Submit():
         # alreadyExists2 = Q3Cursor.fetchall()
 
         if(alreadyExists1 ):
-            errorLabel = tk.Label(queryThreeOutputFrame, text="Already in System", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel = tk.Label(queryThreeOutputFrame, text="Already in System", font=defaultFont, bg=_uta_blue, fg=_white)
             errorLabel.pack(side="top")
         else:
             Q3Cursor.execute("INSERT INTO Book VALUES (?,?,?)",(None,Q3bookTitleEntry.get(),bookPublisherEntry.get(),))
@@ -346,10 +374,10 @@ def Q3Submit():
             branchList = Q3Cursor.fetchall()
             for branch in branchList:
                 Q3Cursor.execute("INSERT INTO Book_copies VALUES (?,?,?)",(tempBookIDs[-1][0],branch[0],5,))
-            resultLabel = tk.Label(queryThreeOutputFrame, text="Successfully Added!\nNew Book ID: {}".format(tempBookIDs[-1][0]), font=defaultFont, bg=_skyblue, fg=_black)
+            resultLabel = tk.Label(queryThreeOutputFrame, text="Successfully Added!\nNew Book ID: {}".format(tempBookIDs[-1][0]), font=defaultFont, bg=_uta_blue, fg=_white)
             resultLabel.pack(side="top")
     else:
-        errorLabel = tk.Label(queryThreeOutputFrame, text="Fill in all entry boxes", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryThreeOutputFrame, text="Fill in all entry boxes", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(side="top")
 
     Q3Connection.commit()
@@ -374,7 +402,8 @@ def displayQ3Results():
     tree3.heading("2", text="Branch_id")
     tree3.heading("3", text="No_copies")
 
-    print(len(tree3.get_children()))
+    tree3.tag_configure("odd", background='#E8E8E8')
+    tree3.tag_configure("even", background='#DFDFDF')
 
     r1Connect = sqlite3.connect("LMS.db")
     r1cursor = r1Connect.cursor()
@@ -383,40 +412,49 @@ def displayQ3Results():
 
     rows = r1cursor.fetchall()
 
+    x = 0
     for row in rows:
-        print(row)
-        tree3.insert("", tk.END, values=row)
+        if x % 2 == 0:
+            tree3.insert("", tk.END, values=row, tags=("even"))
+        else:
+            tree3.insert("", tk.END, values=row, tags=("odd"))
+        x += 1
+
+    tree3.column("1", anchor=tk.CENTER)
+    tree3.column("2", anchor=tk.CENTER)
+    tree3.column("3", anchor=tk.CENTER)
+
     tree3.pack(padx=10, pady=10)
 
     r1Connect.commit()
     r1Connect.close()
 
-bookInputFrame2 = tk.Frame(tab3, background=_navyblue)
+bookInputFrame2 = tk.Frame(tab3, background=_uta_orange)
 bookInputFrame2.pack(side=tk.LEFT, fill="both", expand=False)
 
-queryThreeOutputFrame = tk.Frame(tab3, background=_skyblue)
+queryThreeOutputFrame = tk.Frame(tab3, background=_uta_blue)
 queryThreeOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q3DescriptionLabel = tk.Label(bookInputFrame2,
-                              text="Add Book to System", font=defaultFont, bg=_navyblue, fg=_white)
+                              text="Add Book to System", font=defaultFont, bg=_uta_orange, fg=_white)
 Q3DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
 Q3OutputLabel = tk.Label(queryThreeOutputFrame,
-                              text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+                              text="Output", font=defaultFont, bg=_uta_blue, fg=_white)
 Q3OutputLabel.pack(side="top", pady=10)
 
 Q3bookTitleEntry = tk.Entry(bookInputFrame2, font=defaultFont)
-Q3bookTitleEntryLabel = tk.Label(bookInputFrame2, text="Book Title", font=defaultFont, bg=_navyblue, fg=_white)
+Q3bookTitleEntryLabel = tk.Label(bookInputFrame2, text="Book Title", font=defaultFont, bg=_uta_orange, fg=_white)
 Q3bookTitleEntryLabel.grid(row=1, column=0, columnspan=2, sticky='sw')
 Q3bookTitleEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
 bookPublisherEntry = tk.Entry(bookInputFrame2, font=defaultFont)
-bookPublisherEntryLabel = tk.Label(bookInputFrame2, text="Book Publisher", font=defaultFont, bg=_navyblue, fg=_white)
+bookPublisherEntryLabel = tk.Label(bookInputFrame2, text="Book Publisher", font=defaultFont, bg=_uta_orange, fg=_white)
 bookPublisherEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
 bookPublisherEntry.grid(row=4, column=0, columnspan=2, padx=10)
 
 bookAuthorEntry = tk.Entry(bookInputFrame2, font=defaultFont)
-bookAuthorEntryLabel = tk.Label(bookInputFrame2, text="Book Author", font=defaultFont, bg=_navyblue, fg=_white)
+bookAuthorEntryLabel = tk.Label(bookInputFrame2, text="Book Author", font=defaultFont, bg=_uta_orange, fg=_white)
 bookAuthorEntryLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
 bookAuthorEntry.grid(row=6, column=0, columnspan=2, padx=10)
 
@@ -461,36 +499,36 @@ def Q4Submit():
 
             print(len(tree4.get_children()))
         else:
-            errorLabel = tk.Label(queryFourOutputFrame, text="Book No Longer Held", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel = tk.Label(queryFourOutputFrame, text="Book No Longer Held", font=defaultFont, bg=_uta_blue, fg=_white)
             errorLabel.pack(side="top")
     else:
-        errorLabel = tk.Label(queryFourOutputFrame, text="Invalid Book Title", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryFourOutputFrame, text="Invalid Book Title", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(side="top")
 
     Q4Connection.commit()
     Q4Connection.close()
 
-bookCopiesPerBranchInputFrame = tk.Frame(tab4, background=_navyblue)
+bookCopiesPerBranchInputFrame = tk.Frame(tab4, background=_uta_orange)
 bookCopiesPerBranchInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
 
-queryFourOutputFrame = tk.Frame(tab4, background=_skyblue)
+queryFourOutputFrame = tk.Frame(tab4, background=_uta_blue)
 queryFourOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q4DescriptionLabel = tk.Label(bookCopiesPerBranchInputFrame,
-                              text="Search for a Book", font=defaultFont, bg=_navyblue, fg=_white)
+                              text="Search for a Book", font=defaultFont, bg=_uta_orange, fg=_white)
 Q4DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
 Q4OutputLabel = tk.Label(queryFourOutputFrame,
-                              text="Output", font=defaultFont, bg=_skyblue, fg=_black)
+                              text="Output", font=defaultFont, bg=_uta_blue, fg=_white)
 Q4OutputLabel.pack(side="top", pady=10)
 
 Q4bookTitleEntry = tk.Entry(bookCopiesPerBranchInputFrame, font=defaultFont)
-Q4bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInputFrame, text="Book Title", font=defaultFont, bg=_navyblue, fg=_white)
+Q4bookTitleEntryLabel = tk.Label(bookCopiesPerBranchInputFrame, text="Book Title", font=defaultFont, bg=_uta_orange, fg=_white)
 Q4bookTitleEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
 Q4bookTitleEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
-Q4SubmitButton = tk.Button(bookCopiesPerBranchInputFrame, text = 'Submit', font=defaultFont,
-                           command = Q4Submit).grid(row=3, column=0, columnspan=2, pady=10)
+Q4SubmitButton = tk.Button(bookCopiesPerBranchInputFrame, text = 'Submit', font=defaultFont, command = Q4Submit)
+Q4SubmitButton.grid(row=3, column=0, columnspan=2, pady=10)
 
 # -- Query 5 --
 def Q5Submit():
@@ -556,10 +594,10 @@ def Q5Submit():
             # resultLabel = tk.Label(queryFiveOutputFrame, text=Q5PrintResults)
             # resultLabel.pack(side="top")
         else:
-            errorLabel = tk.Label(queryFiveOutputFrame, text="No late returns found", font=defaultFont, bg=_skyblue, fg=_black)
+            errorLabel = tk.Label(queryFiveOutputFrame, text="No late returns found", font=defaultFont, bg=_uta_blue, fg=_white)
             errorLabel.pack(side="top")
     else:
-        errorLabel = tk.Label(queryFiveOutputFrame, text="Invalid Date Range", font=defaultFont, bg=_skyblue, fg=_black)
+        errorLabel = tk.Label(queryFiveOutputFrame, text="Invalid Date Range", font=defaultFont, bg=_uta_blue, fg=_white)
         errorLabel.pack(side="top")
 
     Q5Connection.commit()
@@ -600,27 +638,27 @@ def displayQ5Results():
     r1Connect.commit()
     r1Connect.close()
 
-dueDatesInputFrame = tk.Frame(tab5, background=_navyblue)
+dueDatesInputFrame = tk.Frame(tab5, background=_uta_orange)
 dueDatesInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
 
-queryFiveOutputFrame = tk.Frame(tab5, background=_skyblue)
+queryFiveOutputFrame = tk.Frame(tab5, background=_uta_blue)
 queryFiveOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
 Q5DescriptionLabel = tk.Label(dueDatesInputFrame,
-                              text="Due Dates Within Range", font=defaultFont, bg=_navyblue, fg=_white)
+                              text="Due Dates Within Range", font=defaultFont, bg=_uta_orange, fg=_white)
 Q5DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
 Q5OutputLabel = tk.Label(queryFiveOutputFrame,
-                          text="Late Returns", font=defaultFont, bg=_skyblue, fg=_black)
+                          text="Late Returns", font=defaultFont, bg=_uta_blue, fg=_white)
 Q5OutputLabel.pack(side="top", pady=10)
 
-tk.Label(dueDatesInputFrame, text="Choose a Start Date", font=defaultFont, bg=_navyblue, fg=_white).grid(row=1, column=0, columnspan=2, sticky="sw")
-cal1 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_black, foreground="white", bd=2)
+tk.Label(dueDatesInputFrame, text="Choose a Start Date", font=defaultFont, bg=_uta_orange, fg=_white).grid(row=1, column=0, columnspan=2, sticky="sw")
+cal1 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_white, foreground="white", bd=2)
 cal1.grid(row=2, column=0, columnspan=2, sticky="sw", padx=10)
 Q5Start_Date = cal1
 
-tk.Label(dueDatesInputFrame, text="Choose an End Date", font=defaultFont, bg=_navyblue, fg=_white).grid(row=3, column=0, columnspan=2, sticky="sw")
-cal2 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_black, foreground="white", bd=2)
+tk.Label(dueDatesInputFrame, text="Choose an End Date", font=defaultFont, bg=_uta_orange, fg=_white).grid(row=3, column=0, columnspan=2, sticky="sw")
+cal2 = DateEntry(dueDatesInputFrame, font=defaultFont, width=16, background=_white, foreground="white", bd=2)
 cal2.grid(row=4, column=0, columnspan=2, sticky="sw", padx=10)
 Q5End_Date = cal2
 
