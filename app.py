@@ -159,20 +159,20 @@ Q1DescriptionLabel = tk.Label(bookInputFrame1, text="Check Out a Book", font=def
 
 Q1OutputLabel = tk.Label(queryOneOutputFrame, text="Output", font=defaultFont).pack(side=tk.TOP)
 
-bookIDEntry = tk.Entry(bookInputFrame1)
+bookIDEntry = tk.Entry(bookInputFrame1, font=defaultFont)
 bookIDEntryLabel = tk.Label(bookInputFrame1, text="Book ID", font=defaultFont, background=_navyblue, fg=_white)
 bookIDEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
-bookIDEntry.grid(row=2, column=0, columnspan=2)
+bookIDEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
-libraryBranchIDEntry = tk.Entry(bookInputFrame1)
+libraryBranchIDEntry = tk.Entry(bookInputFrame1, font=defaultFont)
 libraryBranchIDEntryLabel = tk.Label(bookInputFrame1, text="Branch ID", font=defaultFont, background=_navyblue, fg=_white)
 libraryBranchIDEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
-libraryBranchIDEntry.grid(row=4, column=0, columnspan=2)
+libraryBranchIDEntry.grid(row=4, column=0, columnspan=2, padx=10)
 
-bookBorrowerEntry = tk.Entry(bookInputFrame1)
+bookBorrowerEntry = tk.Entry(bookInputFrame1, font=defaultFont)
 bookBorrowerEntryLabel = tk.Label(bookInputFrame1, text="Card No.", font=defaultFont, background=_navyblue, fg=_white)
 bookBorrowerEntryLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
-bookBorrowerEntry.grid(row=6, column=0, columnspan=2)
+bookBorrowerEntry.grid(row=6, column=0, columnspan=2, padx=10)
 
 Q1SubmitButton = tk.Button(bookInputFrame1, text = 'Submit', font=defaultFont, command = Q1Submit).grid(row=7, column=0, pady=10)
 
@@ -228,7 +228,6 @@ def displayQ2Results():
 
     style = ttk.Style()
     style.configure("Treeview.Heading", font=defaultFont)
-    # style.configure("Treeview", font=defaultFont)
 
     if tree2.winfo_exists:
         for item in tree2.get_children():
@@ -265,29 +264,32 @@ borrowerInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
 queryTwoOutputFrame = tk.Frame(tab2, background=_skyblue)
 queryTwoOutputFrame.pack(side=tk.RIGHT, fill="both", expand=True)
 
-Q2DescriptionLabel = tk.Label(borrowerInputFrame, text="Create Library Account", font=defaultFont).grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+Q2DescriptionLabel = tk.Label(borrowerInputFrame, text="Create Library Account", font=defaultFont, bg=_navyblue, fg=_white)
+Q2DescriptionLabel.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
 
 Q2OutputLabel = tk.Label(queryTwoOutputFrame, text="Output", font=defaultFont)
 Q2OutputLabel.pack(side="top")
 
 borrowerNameEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
-borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name", font=defaultFont)
+borrowerNameEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Name", font=defaultFont, bg=_navyblue, fg=_white)
 borrowerNameEntryLabel.grid(row=1, column=0, columnspan=2, sticky="sw")
-borrowerNameEntry.grid(row=2, column=0, columnspan=2)
+borrowerNameEntry.grid(row=2, column=0, columnspan=2, padx=10)
 
 borrowerAddressEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
-borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address", font=defaultFont)
+borrowerAddressEntryLabel = tk.Label(borrowerInputFrame, text="Borrower Address", font=defaultFont, bg=_navyblue, fg=_white)
 borrowerAddressEntryLabel.grid(row=3, column=0, columnspan=2, sticky="sw")
-borrowerAddressEntry.grid(row=4, column=0, columnspan=2)
+borrowerAddressEntry.grid(row=4, column=0, columnspan=2, padx=10)
 
 borrowerPhoneNumberEntry = tk.Entry(borrowerInputFrame, font=defaultFont)
-borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.", font=defaultFont)
+borrowerPhoneNumberLabel = tk.Label(borrowerInputFrame, text="Borrower Phone No.", font=defaultFont, bg=_navyblue, fg=_white)
 borrowerPhoneNumberLabel.grid(row=5, column=0, columnspan=2, sticky="sw")
-borrowerPhoneNumberEntry.grid(row=6, column=0, columnspan=2)
+borrowerPhoneNumberEntry.grid(row=6, column=0, columnspan=2, padx=10)
 
-Q2SubmitButton = tk.Button(borrowerInputFrame, text = 'Submit', font=defaultFont, command = Q2Submit).grid(row=7, column=0,columnspan=2, pady=10)
+Q2SubmitButton = tk.Button(borrowerInputFrame, text = 'Submit', font=defaultFont, command = Q2Submit)
+Q2SubmitButton.grid(row=7, column=0, pady=10)
 
-Q2ViewButton = tk.Button(borrowerInputFrame, text = 'View', font=defaultFont, command = displayQ2Results).grid(row=7, column=2,columnspan=2, pady=10)
+Q2ViewButton = tk.Button(borrowerInputFrame, text = 'View', font=defaultFont, command = displayQ2Results)
+Q2ViewButton.grid(row=7, column=1, pady=10)
 #------------------------------
 
 #-- Query 3 --
