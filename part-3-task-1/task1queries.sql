@@ -29,21 +29,7 @@ UPDATE Library_branch
 SET LateFee = 50
 WHERE Branch_id = 5;
 
--- UPDATE Library_Branch
--- SET LateFee = (
---     SELECT COUNT(Late) * 10
---     FROM Book_Loans BL
---     WHERE BL.Branch_id = Library_Branch.Branch_id
---     AND BL.Returned_date > BL.Due_date
--- )
--- WHERE EXISTS (
---     SELECT 1
---     FROM Book_Loans BL
---     WHERE BL.Branch_id = Library_Branch.Branch_id
---     AND BL.Returned_date > BL.Due_date
--- );
-
--- View --
+-- Query 3 --
 CREATE VIEW vBookLoanInfo AS
 SELECT BL.Card_no AS Card_No,
        BR.name as 'Borrower Name',
@@ -67,17 +53,3 @@ FROM Book_Loans BL
 JOIN Borrower BR ON BL.Card_no = BR.Card_no
 JOIN Book BK ON BL.Book_id = BK.Book_id
 JOIN Library_branch LB ON BL.branch_id = LB.Branch_id;
-
--- CREATE VIEW IF NOT EXISTS BookLoanInfo AS 
--- SELECT BR.name AS BName, BL.Card_no AS Card_No, BK.Book_id AS Book_id, BK.Title AS Title, BL.Branch_id, BL.Date_out AS Date_Out, BL.Due_date AS Due_Date, BL.Returned_date, 
---   CASE WHEN BL.Returned_date <= BL.Due_date 
---   THEN 0 
---   ELSE JulianDay(BL.Returned_date) - JulianDay(BL.Due_date) 
---   END AS 'DaysLate',
-                     
---   CASE WHEN BL.Returned_date <= BL.Due_date 
---   THEN 0
-                     
---   ELSE (JulianDay(BL.Returned_date) - JulianDay(BL.Due_date)) * 10 
---   END AS LateFeeBalance 
--- FROM Book_Loans BL JOIN Borrower BR ON BL.Card_no = BR.Card_no JOIN Book BK ON BL.Book_id = BK.Book_id;

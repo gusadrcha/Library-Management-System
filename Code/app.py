@@ -72,7 +72,7 @@ def Q1Submit():
     if resultLabel.winfo_exists:
         resultLabel.pack_forget()
 
-    Q1Connection = sqlite3.connect("LMS.db")
+    Q1Connection = sqlite3.connect("./LMS.db")
     Q1Cursor = Q1Connection.cursor()
 
     Q1Cursor.execute("SELECT * FROM Book WHERE Book_id = ?",(Q1bookIDEntry.get(),))
@@ -147,7 +147,7 @@ def displayQ1Result():
     tree1.tag_configure("odd", background='#E8E8E8')
     tree1.tag_configure("even", background='#DFDFDF')
 
-    r1Connect = sqlite3.connect("LMS.db")
+    r1Connect = sqlite3.connect("./LMS.db")
     r1cursor = r1Connect.cursor()
 
     r1cursor.execute("SELECT * FROM book_loans")
@@ -229,7 +229,7 @@ def Q2Submit():
     validNumberSet = set("0123456789")
     inputSet = set(str(Q2borrowerPhoneNumberEntry.get()))
 
-    Q2Connection = sqlite3.connect("LMS.db")
+    Q2Connection = sqlite3.connect("./LMS.db")
     Q2Cursor = Q2Connection.cursor()
 
     if(Q2borrowerNameEntry.get()):   
@@ -281,7 +281,7 @@ def displayQ2Results():
     tree2.heading("3", text="Address")
     tree2.heading("4", text="Phone")
 
-    r1Connect = sqlite3.connect("LMS.db")
+    r1Connect = sqlite3.connect("./LMS.db")
     r1cursor = r1Connect.cursor()
 
     r1cursor.execute("SELECT * FROM borrower")
@@ -357,7 +357,7 @@ def Q3Submit():
     if resultLabel.winfo_exists:
         resultLabel.pack_forget()
 
-    Q3Connection = sqlite3.connect("LMS.db")
+    Q3Connection = sqlite3.connect("./LMS.db")
     Q3Cursor = Q3Connection.cursor()
 
     if(Q3bookTitleEntry.get() and Q3bookPublisherEntry.get() and Q3bookAuthorEntry.get()):
@@ -408,7 +408,7 @@ def displayQ3Results():
     tree3.tag_configure("odd", background='#E8E8E8')
     tree3.tag_configure("even", background='#DFDFDF')
 
-    r1Connect = sqlite3.connect("LMS.db")
+    r1Connect = sqlite3.connect("./LMS.db")
     r1cursor = r1Connect.cursor()
 
     r1cursor.execute("SELECT * FROM Book_copies")
@@ -483,7 +483,7 @@ def Q4Submit():
     style = ttk.Style()
     style.configure("Treeview.Heading", font=defaultFont)
 
-    Q4Connection = sqlite3.connect("LMS.db")
+    Q4Connection = sqlite3.connect("./LMS.db")
     Q4Cursor = Q4Connection.cursor()
 
     Q4Cursor.execute("SELECT Book_id FROM Book WHERE Title = ?",(Q4bookTitleEntry.get(),))
@@ -549,7 +549,7 @@ def Q5Submit():
     if resultLabel.winfo_exists:
         resultLabel.pack_forget()
 
-    Q5Connection = sqlite3.connect("LMS.db")
+    Q5Connection = sqlite3.connect("./LMS.db")
     Q5Cursor = Q5Connection.cursor()
 
     style = ttk.Style()
@@ -663,7 +663,7 @@ def displayQ5Results():
 
     print(len(tree5.get_children()))
 
-    r1Connect = sqlite3.connect("LMS.db")
+    r1Connect = sqlite3.connect("./LMS.db")
     r1cursor = r1Connect.cursor()
 
     r1cursor.execute("SELECT * FROM Book_copies")
@@ -736,7 +736,7 @@ def Q6aSubmit():
     style = ttk.Style()
     style.configure("Treeview.Heading", font=defaultFont)
 
-    Q6aConnection = sqlite3.connect("LMS.db")
+    Q6aConnection = sqlite3.connect("./LMS.db")
     Q6aCursor = Q6aConnection.cursor()
 
     Q6aCursor.execute('''DROP VIEW IF EXISTS vBookLoanInfo''')
@@ -912,7 +912,7 @@ def Q6bSubmit():
     if resultLabel.winfo_exists:
         resultLabel.pack_forget()
 
-    Q6bConnection = sqlite3.connect("LMS.db")
+    Q6bConnection = sqlite3.connect("./LMS.db")
     Q6bCursor = Q6bConnection.cursor()
 
     tree6b.heading("1", text="Book ID")
