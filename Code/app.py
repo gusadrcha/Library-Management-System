@@ -6,10 +6,6 @@ from datetime import date, timedelta, datetime
 import sqlite3
 
 _white = "#ffffff"
-# _white = "#00171f"
-_uta_orange = "#003459"
-_blue = "#007ea7"
-_uta_blue = "#00a8e8"
 _uta_orange = "#F58025"
 _uta_blue = "#0064B1"
 
