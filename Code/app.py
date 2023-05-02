@@ -22,8 +22,6 @@ LMS_GUI_WINDOW.config(bg=_white)
 height = LMS_GUI_WINDOW.winfo_screenheight()
 width = LMS_GUI_WINDOW.winfo_screenwidth()
 
-print(height, width)
-
 LMS_GUI_WINDOW.geometry(f'{int(height)}x{int(width)}')
 
 # change the icon of the application
@@ -132,13 +130,26 @@ def displayQ1Result():
         errorLabel.pack_forget() 
 
     tree1.heading("1", text="Book_id")
-    tree1.heading("2", text="Branch_id")
-    tree1.heading("3", text= "Card_no")
-    tree1.heading("4", text="Date_out")
-    tree1.heading("5", text="Due_date")
-    tree1.heading("6", text="Returned_date")
-    tree1.heading("7", text="Late Fee")
+    tree1.column("1", width=100, anchor=tk.CENTER)
 
+    tree1.heading("2", text="Branch_id")
+    tree1.column("2", width=100, anchor=tk.CENTER)
+
+    tree1.heading("3", text= "Card_no")
+    tree1.column("3", width=100, anchor=tk.CENTER)
+    
+    tree1.heading("4", text="Date_out")
+    tree1.column("4", width=100, anchor=tk.CENTER)
+    
+    tree1.heading("5", text="Due_date")
+    tree1.column("5", width=100, anchor=tk.CENTER)
+    
+    tree1.heading("6", text="Returned_date")
+    tree1.column("6", width=150, anchor=tk.CENTER)
+    
+    tree1.heading("7", text="Late Fee")
+    tree1.column("7", width=100, anchor=tk.CENTER)
+    
     tree1.configure(height=30)
 
     style = ttk.Style()
@@ -156,7 +167,6 @@ def displayQ1Result():
 
     x = 0
     for row in rows:
-        print(row)
         if x % 2 == 0:
             tree1.insert("", tk.END, values=row, tags=("even"))
         else:
@@ -290,7 +300,6 @@ def displayQ2Results():
 
     x = 0
     for row in rows:
-        print(row)
         if x % 2 ==0:
             tree2.insert("", tk.END, values=row, tags=("even"))
         else:
@@ -402,8 +411,13 @@ def displayQ3Results():
         errorLabel.pack_forget() 
 
     tree3.heading("1", text= "Book_id")
+    tree3.column("1", anchor=tk.CENTER)
+
     tree3.heading("2", text="Branch_id")
+    tree3.column("2", anchor=tk.CENTER)
+
     tree3.heading("3", text="No_copies")
+    tree3.column("3", anchor=tk.CENTER)
 
     tree3.tag_configure("odd", background='#E8E8E8')
     tree3.tag_configure("even", background='#DFDFDF')
@@ -422,10 +436,6 @@ def displayQ3Results():
         else:
             tree3.insert("", tk.END, values=row, tags=("odd"))
         x += 1
-
-    tree3.column("1", anchor=tk.CENTER)
-    tree3.column("2", anchor=tk.CENTER)
-    tree3.column("3", anchor=tk.CENTER)
 
     tree3.pack(padx=10, pady=10)
 
@@ -493,14 +503,15 @@ def Q4Submit():
         Q4results = Q4Cursor.fetchall()
         if(Q4results):
             for result in Q4results:
-                print(result)
                 tree4.insert("", tk.END, values=result)
             tree4.pack(padx=10, pady=10)
             
             tree4.heading("1", text="Branch_#")
-            tree4.heading("2", text="Amount")
+            tree4.column("1", anchor=tk.CENTER)
 
-            print(len(tree4.get_children()))
+            tree4.heading("2", text="Amount")
+            tree4.column("2", anchor=tk.CENTER)
+
         else:
             errorLabel = tk.Label(queryFourOutputFrame, text="Book No Longer Held", font=defaultFont, bg=_uta_blue, fg=_white)
             errorLabel.pack(side="top")
@@ -631,8 +642,6 @@ def Q5Submit():
 
             tree5.heading("10", text="Late Fee Balance")
             tree5.column("10", width=100, anchor=tk.CENTER)
-
-            print(len(tree5.get_children()))
         else:
             errorLabel = tk.Label(queryFiveOutputFrame, text="No late returns found", font=defaultFont, bg=_uta_blue, fg=_white)
             errorLabel.pack(side="top")
@@ -642,41 +651,6 @@ def Q5Submit():
 
     Q5Connection.commit()
     Q5Connection.close()
-
-def displayQ5Results():
-    global tree5
-    global errorLabel
-
-    style = ttk.Style()
-    style.configure("Treeview.Heading", font=defaultFont)
-
-    if tree5.winfo_exists:
-        for item in tree5.get_children():
-            tree5.delete(item)
-        tree5.pack_forget()
-    
-    if errorLabel.winfo_exists:
-        errorLabel.pack_forget() 
-
-    tree5.heading("1", text= "Book_id")
-    tree5.heading("2", text="Days Late")
-
-    print(len(tree5.get_children()))
-
-    r1Connect = sqlite3.connect("./LMS.db")
-    r1cursor = r1Connect.cursor()
-
-    r1cursor.execute("SELECT * FROM Book_copies")
-
-    rows = r1cursor.fetchall()
-
-    for row in rows:
-        print(row)
-        tree5.insert("", tk.END, values=row)
-    tree5.pack(padx=10, pady=10)
-
-    r1Connect.commit()
-    r1Connect.close()
 
 dueDatesInputFrame = tk.Frame(tab5, background=_uta_orange)
 dueDatesInputFrame.pack(side=tk.LEFT, fill="both", expand=False)
@@ -960,7 +934,6 @@ def Q6bSubmit():
                             WHERE B.Book_id = ? AND VB."Book Title" LIKE ? AND VB."Branch ID" = LB.branch_id AND B.Title = VB."Book Title"
                             GROUP BY card_no''', (Q6bBookIDEntry.get(), tempBookTitle,))
         Q6bResults = Q6bCursor.fetchall()
-        print(Q6bResults)
 
         if(Q6bResults):
             for result in Q6bResults:
@@ -1000,7 +973,6 @@ def Q6bSubmit():
         Q6bCursor.execute('''SELECT B.Book_id, VB."Book Title", LB.LateFee from vBookLoanInfo VB, Library_branch LB, Book B
                             WHERE B.book_id = ? AND VB."Branch ID" = LB.branch_id AND B.Title = VB."Book Title" GROUP BY B.book_id''', (Q6bBookIDEntry.get(),))
         Q6bResults = Q6bCursor.fetchall()
-        print(Q6bResults)
         
         if(Q6bResults):
             for result in Q6bResults:
